@@ -16,9 +16,14 @@ The modules planned are as follows with inital technolgies used:
 - NoSQL Database ~ MongoDB/CouchDB
 - Firewall ~ PfSense (or Linux alterative)
 - Web Server ~ Apache
+- Local-hosted Git Version Control ~ Gitea
+- Docker Repository/Cache - OpenQuay
 - Monitoring ~ Nagios Core/LibreNMS/Prometheus
 - Logging ~ GrayLog/ELK Stack/Prometheus
 - CI/CD ~ Jenkins/Travis
 - Service Desk ~ oSTicket
 - Wiki-Style Documentation ~ Docuwiki
 - Board ~ WeKan
+
+
+While these modules may change with time, in this iteration, this is the technlogies which are being explored.
