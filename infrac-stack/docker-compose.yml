@@ -1,0 +1,169 @@
+version: '3'
+services:
+    boards:
+      build: ./boards
+      image: "boards"
+      container_name: infrac-stak-board
+      restart: unless-stopped
+      stdin_open: true
+      tty:  true
+      privileged: false
+      ports:
+        - "2070:2080/tcp"
+    ci:
+      build: ./ci
+      image: "ci"
+      container_name: infrac-stak-ci
+      restart: unless-stopped
+      stdin_open: true
+      tty:  true
+      environment:
+       - ACCEPT_EULA=Y
+      ports:
+        - "9090:9100/tcp"
+    dhcp:
+      build: ./dhcp
+      image: "dhcp"
+      container_name: infrac-stak-dhcp
+      restart: unless-stopped
+      stdin_open: true
+      tty:  true
+      environment:
+        - ACCEPT_EULA=Y
+      ports:
+        - "67:67/udp"
+        - "68:68/udp"
+    dns:
+      build: ./dns
+      image: "dns"
+      container_name: infrac-stak-dns
+      restart: unless-stopped
+      stdin_open: true
+      tty:  true
+      environment:
+        - ACCEPT_EULA=Y
+      ports:
+        - "53:53/tcp"
+    docker-repo:
+      build: ./docker-repo
+      image: "docker-repo"
+      container_name: infrac-stak-docker-repo
+      restart: unless-stopped
+      stdin_open: true
+      tty:  true
+      environment:
+        - ACCEPT_EULA=Y
+      ports:
+        - "661:661/tcp"
+    firewall:
+      build: ./firewall
+      image: "firewall"
+      container_name: infrac-stak-firewall
+      restart: unless-stopped
+      stdin_open: true
+      tty:  true
+      environment:
+        - ACCEPT_EULA=Y
+      ports:
+        - "75:75/tcp"
+    git:
+      build: ./git
+      image: "git"
+      container_name: infrac-stak-git
+      restart: unless-stopped
+      stdin_open: true
+      tty:  true
+      environment:
+        - ACCEPT_EULA=Y
+      ports:
+        - "22:22/tcp"
+        - "443:443/tcp"
+    ldap:
+      build: ./ldap
+      image: "ldap"
+      container_name: infrac-stak-ldap
+      restart: unless-stopped
+      stdin_open: true
+      tty:  true
+      environment:
+        - ACCEPT_EULA=Y
+      ports:
+        - "389:389/tcp"
+    logging:
+      build: ./logging
+      image: "logging"
+      container_name: infrac-stak-logging
+      restart: unless-stopped
+      stdin_open: true
+      tty:  true
+      environment:
+        - ACCEPT_EULA=Y
+      ports:
+        - "444:444/tcp"
+    monitoring:
+      build: ./monitoring
+      image: "monitoring"
+      container_name: infrac-stak-monitoring
+      restart: unless-stopped
+      stdin_open: true
+      tty:  true
+      environment:
+        - ACCEPT_EULA=Y
+      ports:
+        - "5666:5666/udp"    
+    no-sql:
+      build: ./no-sql
+      image: "no-sql"
+      container_name: infrac-stak-no-sql
+      restart: unless-stopped
+      stdin_open: true
+      tty:  true
+      environment:
+        - ACCEPT_EULA=Y
+      ports:
+        - "27017:27017/tcp"
+    servicedesk:
+      build: ./servicedesk
+      image: "servicedesk"
+      container_name: infrac-stak-servicedesk
+      restart: unless-stopped
+      stdin_open: true
+      tty:  true
+      environment:
+        - ACCEPT_EULA=Y
+      ports:
+        - "83:83/udp"
+    sql:
+      build: ./sql
+      image: "sql"
+      container_name: infrac-stak-sql
+      restart: unless-stopped
+      stdin_open: true
+      tty:  true
+      environment:
+        - ACCEPT_EULA=Y
+      ports:
+        - "2433:1433/tcp"
+    web-server:
+      build: ./web-server
+      image: "web-server"
+      container_name: infrac-stak-web-server
+      restart: unless-stopped
+      stdin_open: true
+      tty:  true
+      environment:
+        - ACCEPT_EULA=Y
+      ports:
+        - "80:80/tcp"
+        - "443:443/tcp"
+    wiki:
+      build: ./wiki
+      image: "wiki"
+      container_name: infrac-stak-wiki
+      restart: unless-stopped
+      stdin_open: true
+      tty:  true
+      environment:
+        - ACCEPT_EULA=Y
+      ports:
+        - "6662:6662/tcp"
