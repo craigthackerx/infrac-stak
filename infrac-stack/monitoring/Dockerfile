@@ -1,4 +1,4 @@
-Use Ubuntu
+#Use Ubuntu
 FROM ubuntu:latest
 
 #Set Enviroment Timezone
