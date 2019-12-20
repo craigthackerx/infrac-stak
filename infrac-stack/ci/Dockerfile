@@ -1,12 +1,35 @@
 #Use Ubuntu or u dum dum
 FROM ubuntu:latest
 
+#Set Enviroment Variables for personal preference below
+
 #Set timezone
-ENV TZ=Europe/London
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+ENV TIME_ZONE=Europe/London
+
+#Set home enviroment
+ENV HOME /home/$NORMAL_USER
+
+#Set System Locale 
+ENV LOCALE_CODE en_GB.UTF-8
+
+#Set user for personal preference and password. These are used later on.
+ENV NORMAL_USER cthacker
+ENV USER_PASSWORD Sp00kyP4SS!
+
+#Set Node paths
+ENV NVM_DIR /usr/local/nvm
+ENV NODE_VERSION 10.16.0
+ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
+ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+
+#Set Gradle Version
+ENV GRADLE_VERSION gradle 4.8.1
 
 #Use bash from now on
 SHELL ["/bin/bash", "-c"]
+
+#Set the timezone
+RUN ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /etc/timezone
 
 #Install & update hings
 RUN apt-get update -y && apt-get -y install \ 
@@ -27,8 +50,7 @@ RUN apt-get update -y && apt-get -y install \
     unzip \
     zip 
 
-#Set System Locale 
-ENV LOCALE_CODE en_GB.UTF-8
+#Add Locale
 RUN locale-gen $LOCALE_CODE
 RUN update-locale LANG=$LOCALE_CODE
 
@@ -36,34 +58,37 @@ RUN update-locale LANG=$LOCALE_CODE
 RUN wget https://raw.githubusercontent.com/gdraheim/docker-systemctl-replacement/master/files/docker/systemctl.py -O /usr/local/bin/systemctl
 RUN chmod a+x /usr/local/bin/systemctl
 
-#Add a standard user for later and open permissions to the needed directories, you're not important enough to use root 
-ENV NORMAL_USER cthacker
-ENV USER_PASSWORD Sp00kyP4SS!
+#Add Jenkins key and source, download and install
+RUN wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | apt-key add -
+RUN sh -c 'echo deb https://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
+RUN apt-get update
+RUN apt-get install jenkins -y
+
+#Add a standard user for later and open permissions to the needed directories
 RUN useradd -m -s /bin/bash $NORMAL_USER
 RUN usermod -aG sudo $NORMAL_USER
 RUN echo $NORMAL_USER:$USER_PASSWORD | chpasswd
 RUN chmod 777 -R /usr/local
 USER $NORMAL_USER
 
-#Set Enviroment variables here...or don't, who cares.
+#Set Bash profile here
 RUN echo 'export NODE_OPTIONS=--max_old_space_size=4096' >> $HOME/.bashrc 
 RUN echo 'export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"' >> $HOME/.bashrc 
 RUN echo 'export ANDROID_HOME="/usr/local/android-sdk-linux"' >> $HOME/.bashrc
 RUN echo 'export PATH=$PATH::$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$JAVA_HOME/bin' >> $HOME/.bashrc
 
-#Install NVM because you aren't smart enough to install Node.JS manually
-ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION 10.16.0
+#Install NVM
 RUN curl --silent -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.2/install.sh | bash
 RUN source $NVM_DIR/nvm.sh \
     && nvm install $NODE_VERSION \
     && nvm alias default $NODE_VERSION \
     && nvm use $NODE_VERSION
-ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
-ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 
-#Install SDKMAN! aswell, because you have no idea what gradle even is nevermind installing it
-ENV GRADLE_VERSION gradle 4.8.1
+#Install SDKMAN! aswell
 RUN curl -s "https://get.sdkman.io" | bash
 RUN source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk install $GRADLE_VERSION
-WORKDIR $HOME/${NORMAL_USER}
+
+#Start Jenkins, cat the password for easy copy and paste on setup and set yourself as normal user.
+CMD jenkins start
+RUN sudo cat /var/lib/jenkins/secrets/initialAdminPassword | $USER_PASSWORD
+WORKDIR $HOME
