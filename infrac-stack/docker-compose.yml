@@ -20,7 +20,7 @@ services:
       environment:
        - ACCEPT_EULA=Y
       ports:
-        - "9090:9100/tcp"
+        - "6622:8080/tcp" #Jenkins is hosted on 8080/tcp
     dhcp:
       build: ./dhcp
       image: "dhcp"

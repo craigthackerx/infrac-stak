@@ -6,15 +6,15 @@ FROM ubuntu:latest
 #Set timezone
 ENV TIME_ZONE=Europe/London
 
-#Set home enviroment
-ENV HOME /home/$NORMAL_USER
-
 #Set System Locale 
 ENV LOCALE_CODE en_GB.UTF-8
 
 #Set user for personal preference and password. These are used later on.
 ENV NORMAL_USER cthacker
 ENV USER_PASSWORD Sp00kyP4SS!
+
+#Set home enviroment
+ENV HOME /home/$NORMAL_USER
 
 #Set Node paths
 ENV NVM_DIR /usr/local/nvm
@@ -88,7 +88,8 @@ RUN source $NVM_DIR/nvm.sh \
 RUN curl -s "https://get.sdkman.io" | bash
 RUN source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk install $GRADLE_VERSION
 
-#Start Jenkins, cat the password for easy copy and paste on setup and set yourself as normal user.
-CMD jenkins start
-RUN sudo cat /var/lib/jenkins/secrets/initialAdminPassword | $USER_PASSWORD
+#Expose containers port 8080 to host. Jenkins is hosted on port 8080.
+EXPOSE 8080
+
+#Change back to home
 WORKDIR $HOME
