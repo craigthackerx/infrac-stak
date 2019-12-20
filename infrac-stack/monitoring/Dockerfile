@@ -5,13 +5,12 @@ FROM ubuntu:latest
 ENV TZ=Europe/London
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-
 #Use Bash
 SHELL ["/bin/bash", "-c"]
 
-
 #Update and install things
-RUN apt-get update -y && apt-get -y install sudo \
+RUN apt-get update -y && apt-get -y install \
+    sudo \
     bash \
     nano \
     vim \
@@ -44,20 +43,16 @@ RUN apt-get update -y && apt-get -y install sudo \
     unzip \
     zip 
 
-
 #Clean the update cache
 RUN apt-get autoclean
-
 
 #Generate Locales
 RUN locale-gen en_GB.UTF-8
 RUN update-locale LANG=en_GB.UTF-8
 
-
 #Fix Systemctl in Docker container
 RUN wget https://raw.githubusercontent.com/gdraheim/docker-systemctl-replacement/master/files/docker/systemctl.py -O /usr/local/bin/systemctl
 RUN chmod a+x /usr/local/bin/systemctl
-
 
 #Add a standard user for later and open permissions to the needed directories
 RUN useradd -m -s /bin/bash nagios 
@@ -71,7 +66,6 @@ RUN chmod 777 /home/nagios
 RUN export DISPLAY=localhost:0
 RUN export NO_AT_BRIDGE=1
 RUN exec dbus-run-session -- bash
-
 
 #Install Nagios
 WORKDIR /opt
@@ -91,17 +85,14 @@ RUN cp -R contrib/eventhandlers/ /usr/local/nagios/libexec/
 RUN chown -R nagios:nagios /usr/local/nagios/libexec/eventhandlers
 ADD nagios.conf /etc/apache2/conf-available/nagios.conf
 
-
 #Make Nagios admin account & prepare apache
 RUN htpasswd -b -c /usr/local/nagios/etc/htpasswd.users nagiosadmin Sp00kyP4ss
 RUN a2enconf nagios
 RUN a2enmod cgi rewrite
 
-
 #Add Scipts & Config
 ADD libexec /usr/local/nagios/libexec/
 RUN chmod a+x -R /usr/local/nagios
-
 
 #Expose Ports
 EXPOSE 80/tcp

@@ -1,11 +1,11 @@
 #Use Ubuntu or u dum dum
 FROM ubuntu:latest
 
-#Set timezone so yer no wan eh they foreign folk wae the funny times /s
+#Set timezone
 ENV TZ=Europe/London
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-#Bash because why would you use /bin/sh?
+#Use bash from now on
 SHELL ["/bin/bash", "-c"]
 
 #Install & update hings
@@ -27,7 +27,7 @@ RUN apt-get update -y && apt-get -y install \
     unzip \
     zip 
 
-#Set System Locale so you don't get mixed up when your container breaks
+#Set System Locale 
 ENV LOCALE_CODE en_GB.UTF-8
 RUN locale-gen $LOCALE_CODE
 RUN update-locale LANG=$LOCALE_CODE
