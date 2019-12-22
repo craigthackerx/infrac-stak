@@ -6,8 +6,6 @@ FROM ubuntu:latest
 #Set timezone
 ENV TIME_ZONE=Europe/London
 
-#Set home enviroment
-ENV HOME /home/$NORMAL_USER
 
 #Set System Locale 
 ENV LOCALE_CODE en_GB.UTF-8
@@ -15,6 +13,9 @@ ENV LOCALE_CODE en_GB.UTF-8
 #Set user for personal preference and password. These are used later on.
 ENV NORMAL_USER cthacker
 ENV USER_PASSWORD Sp00kyP4SS!
+
+#Set home enviroment
+ENV HOME /home/$NORMAL_USER
 
 #Set Node paths
 ENV NVM_DIR /usr/local/nvm

@@ -3,7 +3,7 @@
 FROM ubuntu:latest
 
 #Set Enviroment Variables for personal preference below
-EXPOSE 80 139 445
+EXPOSE 80 443 139 445
 
 #Set timezone
 ENV TIME_ZONE=Europe/London
