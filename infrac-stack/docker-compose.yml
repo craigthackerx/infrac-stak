@@ -156,6 +156,19 @@ services:
       ports:
         - "80:80/tcp"
         - "443:443/tcp"
+    webmin:
+      build: ./webmin
+      image: "webmin"
+      container_name: infrac-stak-webmin
+      restart: unless-stopped
+      stdin_open: true
+      tty:  true
+      environment:
+        - ACCEPT_EULA=Y
+      ports:
+        - "66627:80/tcp"
+        - "66628:139/tcp"
+        - "66629:445/tcp"
     wiki:
       build: ./wiki
       image: "wiki"
