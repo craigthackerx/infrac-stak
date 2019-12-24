@@ -1,4 +1,4 @@
-#Use Ubuntu or u dum dum
+#Use Ubuntu or u dum dum -test
 FROM ubuntu:latest
 
 #Set Enviroment Variables for personal preference below
