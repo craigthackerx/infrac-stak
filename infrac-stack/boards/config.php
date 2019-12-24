@@ -1,3 +1,5 @@
+<?php
+
 // Database driver: sqlite, mysql or postgres (sqlite by default)
 define('DB_DRIVER', 'mysql');
 
