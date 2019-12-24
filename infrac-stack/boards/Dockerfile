@@ -3,6 +3,7 @@ FROM ubuntu:latest
 
 #Set Enviroment Variables for personal preference below
 
+#Set Kanboard Versions
 ENV KANBOARD_VERSION 1.2.13
 
 #Set timezone
@@ -18,15 +19,6 @@ ENV USER_PASSWORD Sp00kyP4SS!
 #Set home enviroment
 ENV HOME /home/$NORMAL_USER
 
-#Set Node paths
-ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION 10.16.0
-ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
-ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
-
-#Set Gradle Version
-ENV GRADLE_VERSION gradle 4.8.1
-
 #Use bash from now on
 SHELL ["/bin/bash", "-c"]
 
@@ -36,7 +28,6 @@ RUN ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /
 #Install & update hings
 RUN apt-get update -y && apt-get -y install \ 
     apt-utils \
-#   apache2 \
     bash \
     curl \
     ifupdown \
@@ -78,11 +69,11 @@ RUN chmod a+x /usr/local/bin/systemctl
 
 RUN service mysql start \ 
     && mysql -u root -e "CREATE DATABASE kanboard;" \
-#    && mysql -u root -e "kanboard < /var/www/html/kanboard/app/Schema/Sql/mysql.sql" \
     && mysql -u root -e "CREATE USER 'kanboarduser'@'localhost' IDENTIFIED BY 'yourpassword';" \
     && mysql -u root -e "GRANT ALL PRIVILEGES ON kanboard.* TO 'kanboarduser'@'localhost' IDENTIFIED BY 'yourpassword' WITH GRANT OPTION;" \
     && mysql -u root -e "FLUSH PRIVILEGES;"
 
+#Add Boards source code
 RUN cd /var/www/html \
     && wget https://github.com/kanboard/kanboard/archive/v$KANBOARD_VERSION.zip \
     && unzip *.zip \
@@ -90,10 +81,10 @@ RUN cd /var/www/html \
     && chown -R www-data:www-data /var/www/html/kanboard/data \
     && rm *.zip
 
+#Prepare php & nginx
 RUN mv /var/www//html/kanboard/config.default.php /var/www/html/kanboard/config.php
 ADD config.php /var/www/html/kanboard/
 RUN chown -R www-data:www-data /var/www/html/kanboard
-#ADD 10-opache.ini /etc/php/7.2/fpm/conf.d/
 ADD kanboard.conf /etc/nginx/conf.d/
 RUN service nginx start && nginx -t
 EXPOSE 80/tcp
@@ -106,6 +97,7 @@ RUN chmod 777 -R /usr/local
 USER $NORMAL_USER
 WORKDIR $HOME
 
+#Add Start up service for Nginx
 ENTRYPOINT echo $USER_PASSWORD | sudo -S service mysql start \
         && echo $USER_PASSWORD | sudo -S service nginx start \
         && echo $USER_PASSWORD | sudo -S service php7.2-fpm start \
