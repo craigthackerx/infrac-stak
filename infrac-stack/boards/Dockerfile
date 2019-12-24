@@ -35,8 +35,8 @@ RUN ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /
 
 #Install & update hings
 RUN apt-get update -y && apt-get -y install \ 
-  apt-utils \
-    apache2 \
+    apt-utils \
+#   apache2 \
     bash \
     curl \
     ifupdown \
@@ -44,7 +44,7 @@ RUN apt-get update -y && apt-get -y install \
     mariadb-server \
     mariadb-client \
     nano \
-  #  nginx \
+    nginx \
     openssh-server \
     openssl \
     php7.2 \
@@ -94,9 +94,9 @@ RUN mv /var/www//html/kanboard/config.default.php /var/www/html/kanboard/config.
 ADD config.php /var/www/html/kanboard/
 RUN chown -R www-data:www-data /var/www/html/kanboard
 ADD 10-opache.ini /etc/php/7.2/fpm/conf.d/
-#ADD kanboard.conf /etc/nginx/conf.d/
-#RUN service nginx start && nginx -t
-EXPOSE 80
+ADD kanboard.conf /etc/nginx/conf.d/
+RUN service nginx start && nginx -t
+EXPOSE 80/tcp
 
 #Add a standard user for later and open permissions to the needed directories
 RUN useradd -m -s /bin/bash $NORMAL_USER
