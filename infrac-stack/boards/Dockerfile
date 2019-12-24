@@ -93,7 +93,7 @@ RUN cd /var/www/html \
 RUN mv /var/www//html/kanboard/config.default.php /var/www/html/kanboard/config.php
 ADD config.php /var/www/html/kanboard/
 RUN chown -R www-data:www-data /var/www/html/kanboard
-ADD 10-opache.ini /etc/php/7.2/fpm/conf.d/
+#ADD 10-opache.ini /etc/php/7.2/fpm/conf.d/
 ADD kanboard.conf /etc/nginx/conf.d/
 RUN service nginx start && nginx -t
 EXPOSE 80/tcp
@@ -106,7 +106,7 @@ RUN chmod 777 -R /usr/local
 USER $NORMAL_USER
 WORKDIR $HOME
 
-#ENTRYPOINT echo $USER_PASSWORD | sudo -S service mysql start \
-        #&& echo $USER_PASSWORD | sudo -S service apache2 start \
-        #&& echo $USER_PASSWORD | sudo -S service php7.2-fpm start \
-        #&& tail -f /dev/null 
+ENTRYPOINT echo $USER_PASSWORD | sudo -S service mysql start \
+        && echo $USER_PASSWORD | sudo -S service nginx start \
+        && echo $USER_PASSWORD | sudo -S service php7.2-fpm start \
+        && tail -f /dev/null 
