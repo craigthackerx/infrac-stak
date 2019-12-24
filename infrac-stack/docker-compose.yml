@@ -9,7 +9,7 @@ services:
       tty:  true
       privileged: false
       ports:
-        - "2070:2080/tcp"
+        - "2000:80/tcp"
     ci:
       build: ./ci
       image: "ci"
@@ -20,7 +20,7 @@ services:
       environment:
        - ACCEPT_EULA=Y
       ports:
-        - "9090:9100/tcp"
+        - "2010:8080/tcp" #Jenkins is hosted on 8080/tcp
     dhcp:
       build: ./dhcp
       image: "dhcp"
@@ -54,7 +54,7 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "661:661/tcp"
+        - "2020:661/tcp"
     firewall:
       build: ./firewall
       image: "firewall"
@@ -99,7 +99,7 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "444:444/tcp"
+        - "2030:444/tcp"
     monitoring:
       build: ./monitoring
       image: "monitoring"
@@ -110,7 +110,7 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "5666:5666/udp"    
+        - "2040:5666/udp"    
     no-sql:
       build: ./no-sql
       image: "no-sql"
@@ -132,7 +132,7 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "83:83/udp"
+        - "2050:83/udp"
     sql:
       build: ./sql
       image: "sql"
@@ -154,8 +154,21 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "80:80/tcp"
-        - "443:443/tcp"
+        - "2060:80/tcp"
+        - "2070:443/tcp"
+    webmin:
+      build: ./webmin
+      image: "webmin"
+      container_name: infrac-stak-webmin
+      restart: unless-stopped
+      stdin_open: true
+      tty:  true
+      environment:
+        - ACCEPT_EULA=Y
+      ports:
+        - "2080:80/tcp"
+        - "2090:139/tcp"
+        - "2100:445/tcp"
     wiki:
       build: ./wiki
       image: "wiki"
@@ -166,4 +179,4 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "6662:6662/tcp"
+        - "2110:80/tcp"
