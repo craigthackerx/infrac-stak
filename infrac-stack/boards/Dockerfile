@@ -3,8 +3,6 @@ FROM ubuntu:latest
 
 #Set Enviroment Variables for personal preference below
 
-EXPOSE 80 27017 8080 8081
-
 ENV KANBOARD_VERSION 1.2.13
 
 #Set timezone
@@ -38,14 +36,15 @@ RUN ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /
 #Install & update hings
 RUN apt-get update -y && apt-get -y install \ 
   apt-utils \
-#    apache2 \
+    apache2 \
     bash \
     curl \
     ifupdown \
     locales \
     mariadb-server \
+    mariadb-client \
     nano \
-    nginx \
+  #  nginx \
     openssh-server \
     openssl \
     php7.2 \
@@ -78,8 +77,10 @@ RUN wget https://raw.githubusercontent.com/gdraheim/docker-systemctl-replacement
 RUN chmod a+x /usr/local/bin/systemctl
 
 RUN service mysql start \ 
-    && mysql -u root -e "CREATE DATABASE kanboard CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" \
-    && mysql -u root -e "GRANT ALL PRIVILEGES ON kanboard.* TO 'kanboard'@'localhost' IDENTIFIED BY 'mypassword';" \
+    && mysql -u root -e "CREATE DATABASE kanboard;" \
+#    && mysql -u root -e "kanboard < /var/www/html/kanboard/app/Schema/Sql/mysql.sql" \
+    && mysql -u root -e "CREATE USER 'kanboarduser'@'localhost' IDENTIFIED BY 'yourpassword';" \
+    && mysql -u root -e "GRANT ALL PRIVILEGES ON kanboard.* TO 'kanboarduser'@'localhost' IDENTIFIED BY 'yourpassword' WITH GRANT OPTION;" \
     && mysql -u root -e "FLUSH PRIVILEGES;"
 
 RUN cd /var/www/html \
@@ -92,8 +93,10 @@ RUN cd /var/www/html \
 RUN mv /var/www//html/kanboard/config.default.php /var/www/html/kanboard/config.php
 ADD config.php /var/www/html/kanboard/
 RUN chown -R www-data:www-data /var/www/html/kanboard
-ADD kanboard.conf /etc/nginx/conf.d/
-RUN service nginx start && nginx -t
+ADD 10-opache.ini /etc/php/7.2/fpm/conf.d/
+#ADD kanboard.conf /etc/nginx/conf.d/
+#RUN service nginx start && nginx -t
+EXPOSE 80
 
 #Add a standard user for later and open permissions to the needed directories
 RUN useradd -m -s /bin/bash $NORMAL_USER

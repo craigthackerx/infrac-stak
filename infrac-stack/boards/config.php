@@ -2,10 +2,10 @@
 define('DB_DRIVER', 'mysql');
 
 // Mysql/Postgres username
-define('DB_USERNAME', 'kanboard');
+define('DB_USERNAME', 'kanboarduser');
 
 // Mysql/Postgres password
-define('DB_PASSWORD', 'mypassword');
+define('DB_PASSWORD', 'yourpassword');
 
 // Mysql/Postgres hostname
 define('DB_HOSTNAME', 'localhost');
