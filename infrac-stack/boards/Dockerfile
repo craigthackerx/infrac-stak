@@ -3,6 +3,8 @@ FROM ubuntu:latest
 
 #Set Enviroment Variables for personal preference below
 
+EXPOSE 80 27017 8080 8081
+
 #Set timezone
 ENV TIME_ZONE=Europe/London
 
@@ -69,22 +71,13 @@ RUN apt-get update && apt-get install -y \
     mongodb-org-mongos=4.2.1 \
     mongodb-org-tools=4.2.1
 
-RUN curl --silent -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.2/install.sh | bash
-RUN source $NVM_DIR/nvm.sh \
-    && nvm install $NODE_VERSION \
-    && nvm alias default $NODE_VERSION \
-    && nvm use $NODE_VERSION \
-    && npm install mongo-express
-
-
 #Add a standard user for later and open permissions to the needed directories
 RUN useradd -m -s /bin/bash $NORMAL_USER
 RUN usermod -aG sudo $NORMAL_USER
 RUN echo $NORMAL_USER:$USER_PASSWORD | chpasswd
 RUN chmod 777 -R /usr/local
-RUN chmod 755 -R $HOME
 USER $NORMAL_USER
-
+WORKDIR $HOME
 
 #Set Bash profile here
 RUN echo 'export NODE_OPTIONS=--max_old_space_size=4096' >> $HOME/.bashrc 
@@ -92,12 +85,12 @@ RUN echo 'export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"' >> $HOME/.bashrc
 RUN echo 'export ANDROID_HOME="/usr/local/android-sdk-linux"' >> $HOME/.bashrc
 RUN echo 'export PATH=$PATH::$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$JAVA_HOME/bin' >> $HOME/.bashrc
 
-#Install NVM
 RUN curl --silent -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.2/install.sh | bash
 RUN source $NVM_DIR/nvm.sh \
     && nvm install $NODE_VERSION \
     && nvm alias default $NODE_VERSION \
-    && nvm use $NODE_VERSION
+    && nvm use $NODE_VERSION \
+    && npm install -g mongo-express
 
 #Install SDKMAN! aswell
 RUN curl -s "https://get.sdkman.io" | bash
