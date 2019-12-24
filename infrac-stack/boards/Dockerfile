@@ -1,4 +1,4 @@
-#Use Ubuntu or u dum dum -test
+#Use Ubuntu or u dum dum
 FROM ubuntu:latest
 
 #Set Enviroment Variables for personal preference below
@@ -36,22 +36,29 @@ RUN ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /
 #Install & update hings
 RUN apt-get update -y && apt-get -y install \ 
     apt-utils \
-    sudo \
     bash \
-    nano \
-    openjdk-8-jdk \ 
+    build-essential \
+    bzip2 \
+    ca-certificates \
     curl \
-    software-properties-common \
-    python \
-    wget \
+    g++ \
     git \
-    locales \
+    gnupg \
+    gosu \
     ifupdown \
-    openssl \ 
-    openssh-server \ 
+    libarchive-tools \
+    locales \
+    nano \
+    openjdk-8-jdk \
+    openssh-server \
+    openssl \
+    python3 \
+    software-properties-common \
+    sudo \
     tmux \
     unzip \
-    zip 
+    wget \
+    zip
 
 #Add Locale
 RUN locale-gen $LOCALE_CODE
