@@ -38,14 +38,14 @@ RUN ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /
 #Install & update hings
 RUN apt-get update -y && apt-get -y install \ 
   apt-utils \
-    apache2 \
+#    apache2 \
     bash \
     curl \
     ifupdown \
     locales \
     mariadb-server \
     nano \
-#    nginx \
+    nginx \
     openssh-server \
     openssl \
     php7.2 \
@@ -85,13 +85,15 @@ RUN service mysql start \
 RUN cd /var/www/html \
     && wget https://github.com/kanboard/kanboard/archive/v$KANBOARD_VERSION.zip \
     && unzip *.zip \
-    && chown -R www-data:www-data kanboard-$KANBOARD_VERSION/data \
+    && mv /var/www/html/kanboard-$KANBOARD_VERSION /var/www/html/kanboard/ \
+    && chown -R www-data:www-data /var/www/html/kanboard/data \
     && rm *.zip
 
-ADD config.php /var/www/html/kanboard-$KANBOARD_VERSION/
-RUN chown -R www-data:www-data /var/www/html/kanboard-$KANBOARD_VERSION
-#ADD kanboard.conf /etc/nginx/conf.d/
-#RUN service nginx start && nginx -t
+RUN mv /var/www//html/kanboard/config.default.php /var/www/html/kanboard/config.php
+ADD config.php /var/www/html/kanboard/
+RUN chown -R www-data:www-data /var/www/html/kanboard
+ADD kanboard.conf /etc/nginx/conf.d/
+RUN service nginx start && nginx -t
 
 #Add a standard user for later and open permissions to the needed directories
 RUN useradd -m -s /bin/bash $NORMAL_USER
