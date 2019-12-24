@@ -5,6 +5,8 @@ FROM ubuntu:latest
 
 EXPOSE 80 27017 8080 8081
 
+ENV KANBOARD_VERSION 1.2.13
+
 #Set timezone
 ENV TIME_ZONE=Europe/London
 
@@ -35,24 +37,31 @@ RUN ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /
 
 #Install & update hings
 RUN apt-get update -y && apt-get -y install \ 
-    apt-utils \
+  apt-utils \
+    apache2 \
     bash \
-    build-essential \
-    bzip2 \
-    ca-certificates \
     curl \
-    g++ \
-    git \
-    gnupg \
-    gosu \
     ifupdown \
-    libarchive-tools \
     locales \
+    mariadb-server \
     nano \
-    openjdk-8-jdk \
+#    nginx \
     openssh-server \
     openssl \
-    python3 \
+    php7.2 \
+    php7.2-cli \
+    php7.2-common \
+    php7.2-fpm \
+    php7.2-gd \
+    php7.2-json \
+    php7.2-json \
+    php7.2-ldap \
+    php7.2-mbstring \
+    php7.2-mysql \
+    php7.2-opcache \
+    php7.2-sqlite3 \
+    php7.2-xml \
+    php7.2-zip \
     software-properties-common \
     sudo \
     tmux \
@@ -68,15 +77,21 @@ RUN update-locale LANG=$LOCALE_CODE
 RUN wget https://raw.githubusercontent.com/gdraheim/docker-systemctl-replacement/master/files/docker/systemctl.py -O /usr/local/bin/systemctl
 RUN chmod a+x /usr/local/bin/systemctl
 
-#Add MongoDB key & Install
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 4B7C549A058F8B6B
-RUN echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb.list
-RUN apt-get update && apt-get install -y \
-    mongodb-org=4.2.1 \
-    mongodb-org-server=4.2.1 \
-    mongodb-org-shell=4.2.1 \
-    mongodb-org-mongos=4.2.1 \
-    mongodb-org-tools=4.2.1
+RUN service mysql start \ 
+    && mysql -u root -e "CREATE DATABASE kanboard CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" \
+    && mysql -u root -e "GRANT ALL PRIVILEGES ON kanboard.* TO 'kanboard'@'localhost' IDENTIFIED BY 'mypassword';" \
+    && mysql -u root -e "FLUSH PRIVILEGES;"
+
+RUN cd /var/www/html \
+    && wget https://github.com/kanboard/kanboard/archive/v$KANBOARD_VERSION.zip \
+    && unzip *.zip \
+    && chown -R www-data:www-data kanboard-$KANBOARD_VERSION/data \
+    && rm *.zip
+
+ADD config.php /var/www/html/kanboard-$KANBOARD_VERSION/
+RUN chown -R www-data:www-data /var/www/html/kanboard-$KANBOARD_VERSION
+#ADD kanboard.conf /etc/nginx/conf.d/
+#RUN service nginx start && nginx -t
 
 #Add a standard user for later and open permissions to the needed directories
 RUN useradd -m -s /bin/bash $NORMAL_USER
@@ -86,19 +101,7 @@ RUN chmod 777 -R /usr/local
 USER $NORMAL_USER
 WORKDIR $HOME
 
-#Set Bash profile here
-RUN echo 'export NODE_OPTIONS=--max_old_space_size=4096' >> $HOME/.bashrc 
-RUN echo 'export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"' >> $HOME/.bashrc 
-RUN echo 'export ANDROID_HOME="/usr/local/android-sdk-linux"' >> $HOME/.bashrc
-RUN echo 'export PATH=$PATH::$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$JAVA_HOME/bin' >> $HOME/.bashrc
-
-RUN curl --silent -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.2/install.sh | bash
-RUN source $NVM_DIR/nvm.sh \
-    && nvm install $NODE_VERSION \
-    && nvm alias default $NODE_VERSION \
-    && nvm use $NODE_VERSION \
-    && npm install -g mongo-express
-
-#Install SDKMAN! aswell
-RUN curl -s "https://get.sdkman.io" | bash
-RUN source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk install $GRADLE_VERSION
+#ENTRYPOINT echo $USER_PASSWORD | sudo -S service mysql start \
+        #&& echo $USER_PASSWORD | sudo -S service apache2 start \
+        #&& echo $USER_PASSWORD | sudo -S service php7.2-fpm start \
+        #&& tail -f /dev/null 
