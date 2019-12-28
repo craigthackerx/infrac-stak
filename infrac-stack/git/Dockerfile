@@ -69,12 +69,14 @@ RUN update-locale LANG=$LOCALE_CODE
 RUN wget https://raw.githubusercontent.com/gdraheim/docker-systemctl-replacement/master/files/docker/systemctl.py -O /usr/local/bin/systemctl
 RUN chmod a+x /usr/local/bin/systemctl
 
+#Create Databases
 RUN service mysql start \ 
-    && mysql -u root -e "CREATE DATABASE gitea;" \
+    && mysql -u root -e "CREATE DATABASE gitea CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" \
     && mysql -u root -e "CREATE USER 'giteauser'@'localhost' IDENTIFIED BY 'yourpassword';" \
     && mysql -u root -e "GRANT ALL PRIVILEGES ON gitea.* TO 'giteauser'@'localhost' IDENTIFIED BY 'yourpassword' WITH GRANT OPTION;" \
     && mysql -u root -e "FLUSH PRIVILEGES;"
 
+#Make git users
 RUN adduser \
    --system \
    --shell /bin/bash \
@@ -84,7 +86,7 @@ RUN adduser \
    --home /home/git \
    git
 
-
+#Make git directories
 RUN mkdir -p /var/lib/gitea/{custom,data,indexers,public,log} \
 && chown git:git /var/lib/gitea/{data,indexers,log} \
 && chmod 750 /var/lib/gitea/{data,indexers,log} \
@@ -92,16 +94,20 @@ RUN mkdir -p /var/lib/gitea/{custom,data,indexers,public,log} \
 && chown root:git /etc/gitea \
 && chmod 770 /etc/gitea
 
+#Download gitea
 RUN wget -O gitea https://dl.gitea.io/gitea/1.5.0/gitea-1.5.0-linux-amd64 \
     && chmod +x gitea \
     && cp gitea /usr/local/bin/gitea \
     && rm gitea* 
 
+#Add gitea systemctl service
 ADD gitea.service /etc/systemd/system/gitea.service
 
+#Make reverse proxy
 RUN rm /etc/nginx/sites-enabled/default
 ADD git /etc/nginx/sites-available/git
 RUN sudo ln -s /etc/nginx/sites-available/git /etc/nginx/sites-enabled
+RUN echo '172.17.0.2    example.com' > /etc/hosts
 
 
 #Add a standard user for later and open permissions to the needed directories
@@ -113,4 +119,5 @@ USER $NORMAL_USER
 
 ENTRYPOINT echo $USER_PASSWORD | sudo -S service mysql start \
         && echo $USER_PASSWORD | sudo -S service nginx start \
+        && echo $USER_PASSWORD | sudo -S systemctl start gitea \
         && tail -f /dev/null 
