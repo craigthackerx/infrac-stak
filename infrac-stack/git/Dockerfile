@@ -25,11 +25,6 @@ ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 #Set Gradle Version
 ENV GRADLE_VERSION gradle 4.8.1
 
-ENV GOGS_CUSTOM /data/gogs
-
-ADD https://github.com/tianon/gosu/releases/download/1.10/gosu-amd64 /usr/sbin/gosu
-
-
 #Use bash from now on
 SHELL ["/bin/bash", "-c"]
 
@@ -47,8 +42,6 @@ RUN apt-get update -y && apt-get -y install \
     openjdk-8-jdk \ 
     curl \
     nginx \ 
-    mariadb-server \
-    mariadb-client \
     software-properties-common \
     python \
     wget \
@@ -69,8 +62,17 @@ RUN update-locale LANG=$LOCALE_CODE
 RUN wget https://raw.githubusercontent.com/gdraheim/docker-systemctl-replacement/master/files/docker/systemctl.py -O /usr/local/bin/systemctl
 RUN chmod a+x /usr/local/bin/systemctl
 
+#Create MariaDB
+RUN apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xF1656F24C74CD1D8
+RUN add-apt-repository "deb [arch=amd64,arm64,ppc64el] http://mariadb.mirror.liquidtelecom.com/repo/10.4/ubuntu $(lsb_release -cs) main"
+RUN sudo apt-get install -y mariadb-server mariadb-client
+
 #Create Databases
 RUN service mysql start \ 
+    && mysql -u root -e "SET GLOBAL innodb_large_prefix = ON;" \
+    && mysql -u root -e "SET GLOBAL innodb_file_format=Barracuda;" \
+    && mysql -u root -e "SET GLOBAL innodb_file_per_table=ON;" \
+    && mysql -u root -e "SET GLOBAL innodb_default_row_format=dynamic" \
     && mysql -u root -e "CREATE DATABASE gitea CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" \
     && mysql -u root -e "CREATE USER 'giteauser'@'localhost' IDENTIFIED BY 'yourpassword';" \
     && mysql -u root -e "GRANT ALL PRIVILEGES ON gitea.* TO 'giteauser'@'localhost' IDENTIFIED BY 'yourpassword' WITH GRANT OPTION;" \
@@ -108,7 +110,6 @@ RUN rm /etc/nginx/sites-enabled/default
 ADD git /etc/nginx/sites-available/git
 RUN sudo ln -s /etc/nginx/sites-available/git /etc/nginx/sites-enabled
 RUN echo '172.17.0.2    example.com' > /etc/hosts
-
 
 #Add a standard user for later and open permissions to the needed directories
 RUN useradd -m -s /bin/bash $NORMAL_USER
