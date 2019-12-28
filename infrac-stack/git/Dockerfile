@@ -25,6 +25,11 @@ ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 #Set Gradle Version
 ENV GRADLE_VERSION gradle 4.8.1
 
+ENV GOGS_CUSTOM /data/gogs
+
+ADD https://github.com/tianon/gosu/releases/download/1.10/gosu-amd64 /usr/sbin/gosu
+
+
 #Use bash from now on
 SHELL ["/bin/bash", "-c"]
 
@@ -34,10 +39,16 @@ RUN ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /
 #Install & update hings
 RUN apt-get update -y && apt-get -y install \ 
     sudo \
+    ca-certificates \
+    tzdata \
+    rsync \
     bash \
     nano \
     openjdk-8-jdk \ 
     curl \
+    nginx \ 
+    mariadb-server \
+    mariadb-client \
     software-properties-common \
     python \
     wget \
@@ -48,7 +59,7 @@ RUN apt-get update -y && apt-get -y install \
     openssh-server \ 
     tmux \
     unzip \
-    zip 
+    zip
 
 #Add Locale
 RUN locale-gen $LOCALE_CODE
@@ -58,9 +69,48 @@ RUN update-locale LANG=$LOCALE_CODE
 RUN wget https://raw.githubusercontent.com/gdraheim/docker-systemctl-replacement/master/files/docker/systemctl.py -O /usr/local/bin/systemctl
 RUN chmod a+x /usr/local/bin/systemctl
 
+RUN service mysql start \ 
+    && mysql -u root -e "CREATE DATABASE gitea;" \
+    && mysql -u root -e "CREATE USER 'giteauser'@'localhost' IDENTIFIED BY 'yourpassword';" \
+    && mysql -u root -e "GRANT ALL PRIVILEGES ON gitea.* TO 'giteauser'@'localhost' IDENTIFIED BY 'yourpassword' WITH GRANT OPTION;" \
+    && mysql -u root -e "FLUSH PRIVILEGES;"
+
+RUN adduser \
+   --system \
+   --shell /bin/bash \
+   --gecos 'Git Version Control' \
+   --group \
+   --disabled-password \
+   --home /home/git \
+   git
+
+
+RUN mkdir -p /var/lib/gitea/{custom,data,indexers,public,log} \
+&& chown git:git /var/lib/gitea/{data,indexers,log} \
+&& chmod 750 /var/lib/gitea/{data,indexers,log} \
+&& mkdir /etc/gitea \
+&& chown root:git /etc/gitea \
+&& chmod 770 /etc/gitea
+
+RUN wget -O gitea https://dl.gitea.io/gitea/1.5.0/gitea-1.5.0-linux-amd64 \
+    && chmod +x gitea \
+    && cp gitea /usr/local/bin/gitea \
+    && rm gitea* 
+
+ADD gitea.service /etc/systemd/system/gitea.service
+
+RUN rm /etc/nginx/sites-enabled/default
+ADD git /etc/nginx/sites-available/git
+RUN sudo ln -s /etc/nginx/sites-available/git /etc/nginx/sites-enabled
+
+
 #Add a standard user for later and open permissions to the needed directories
 RUN useradd -m -s /bin/bash $NORMAL_USER
 RUN usermod -aG sudo $NORMAL_USER
 RUN echo $NORMAL_USER:$USER_PASSWORD | chpasswd
 RUN chmod 777 -R /usr/local
 USER $NORMAL_USER
+
+ENTRYPOINT echo $USER_PASSWORD | sudo -S service mysql start \
+        && echo $USER_PASSWORD | sudo -S service nginx start \
+        && tail -f /dev/null 
