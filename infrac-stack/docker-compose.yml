@@ -145,7 +145,8 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "2433:1433/tcp"
+        - "2055:3306/tcp"
+        - "2058:33060/tcp"
     web-server:
       build: ./web-server
       image: "web-server"
