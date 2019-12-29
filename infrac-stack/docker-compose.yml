@@ -44,17 +44,6 @@ services:
         - ACCEPT_EULA=Y
       ports:
         - "53:53/tcp"
-    docker-repo:
-      build: ./docker-repo
-      image: "docker-repo"
-      container_name: infrac-stak-docker-repo
-      restart: unless-stopped
-      stdin_open: true
-      tty:  true
-      environment:
-        - ACCEPT_EULA=Y
-      ports:
-        - "2020:661/tcp"
     firewall:
       build: ./firewall
       image: "firewall"

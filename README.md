@@ -17,7 +17,6 @@ The modules planned are as follows with inital technolgies used:
 - Firewall ~ PfSense (or Linux alterative)
 - Web Server ~ Apache
 - Local-hosted Git Version Control ~ Gitea
-- Docker Repository/Cache - OpenQuay
 - Monitoring ~ Nagios Core/LibreNMS/Prometheus
 - Logging ~ GrayLog/ELK Stack/Prometheus
 - CI/CD ~ Jenkins/Travis
