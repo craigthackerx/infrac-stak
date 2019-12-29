@@ -17,7 +17,6 @@ The modules planned are as follows with inital technolgies used:
 - Git ~ Gitea
 - Java-Server - Apache Tomcat
 - LDAP ~ OpenLDAP
-- Local-hosted Git Version Control ~ Gitea
 - Logging ~ GrayLog/ELK Stack/Prometheus
 - Monitoring ~ Nagios Core
 - NoSQL Database ~ MongoDB
