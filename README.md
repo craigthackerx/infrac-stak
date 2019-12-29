@@ -9,19 +9,21 @@ In it's inital iteration, *it is not for production systems*.  All modules will 
 
 The modules planned are as follows with inital technolgies used:
 
-- Board ~ WeKan
-- CI/CD ~ Jenkins/Travis
+- Board ~ KanBoard
+- CI/CD ~ Jenkins
 - DHCP ~ DHCPD
 - DNS  ~ OpenDNS
 - Firewall ~ PfSense (or Linux alterative)
+- Git ~ Gitea
+- Java-Server - Apache Tomcat
 - LDAP ~ OpenLDAP
 - Local-hosted Git Version Control ~ Gitea
 - Logging ~ GrayLog/ELK Stack/Prometheus
-- Monitoring ~ Nagios Core/LibreNMS/Prometheus
-- NoSQL Database ~ MongoDB/CouchDB
-- SQL Database ~ MySQL/MariaDB
+- Monitoring ~ Nagios Core
+- NoSQL Database ~ MongoDB
+- SQL Database ~ MariaDB
 - Service Desk ~ oSTicket
-- Web Server ~ Apache
+- Web Server ~ Apache HTTPD
 - Wiki-Style Documentation ~ Docuwiki
 
 While these modules may change with time, in this iteration, this is the technlogies which are being explored.

@@ -6,7 +6,6 @@ FROM ubuntu:latest
 #Set timezone
 ENV TIME_ZONE=Europe/London
 
-
 #Set System Locale 
 ENV LOCALE_CODE en_GB.UTF-8
 
@@ -17,14 +16,8 @@ ENV USER_PASSWORD Sp00kyP4SS!
 #Set home enviroment
 ENV HOME /home/$NORMAL_USER
 
-#Set Node paths
-ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION 10.16.0
-ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
-ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
-
-#Set Gradle Version
-ENV GRADLE_VERSION gradle 4.8.1
+#Ports
+EXPOSE 80 443
 
 #Use bash from now on
 SHELL ["/bin/bash", "-c"]
@@ -43,6 +36,7 @@ RUN apt-get update -y && apt-get -y install \
     python \
     wget \
     git \
+    apache2 \ 
     locales \
     ifupdown \
     openssl \ 
@@ -65,3 +59,6 @@ RUN usermod -aG sudo $NORMAL_USER
 RUN echo $NORMAL_USER:$USER_PASSWORD | chpasswd
 RUN chmod 777 -R /usr/local
 USER $NORMAL_USER
+
+ENTRYPOINT echo $USER_PASSWORD | sudo -S service apache2 start \
+        && tail -f /dev/null 

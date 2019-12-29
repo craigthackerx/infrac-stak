@@ -65,10 +65,22 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "1020:3306"
+        - "1020:3306/tcp"
         - "1030:22/tcp"
         - "1035:80/tcp"
         - "1040:443/tcp"
+      java-server:
+      build: ./java-server
+      image: "java-server"
+      container_name: infrac-stak-java-server
+      restart: unless-stopped
+      stdin_open: true
+      tty:  true
+      environment:
+        - ACCEPT_EULA=Y
+      ports:
+        - "1042:8080/tcp"
+        - "1045:8443/tcp"
     ldap:
       build: ./ldap
       image: "ldap"

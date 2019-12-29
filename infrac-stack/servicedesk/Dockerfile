@@ -16,15 +16,6 @@ ENV USER_PASSWORD Sp00kyP4SS!
 #Set home enviroment
 ENV HOME /home/$NORMAL_USER
 
-#Set Node paths
-ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION 10.16.0
-ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
-ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
-
-#Set Gradle Version
-ENV GRADLE_VERSION gradle 4.8.1
-
 #Use bash from now on
 SHELL ["/bin/bash", "-c"]
 
