@@ -6,7 +6,6 @@ FROM ubuntu:latest
 #Set timezone
 ENV TIME_ZONE=Europe/London
 
-
 #Set System Locale 
 ENV LOCALE_CODE en_GB.UTF-8
 
@@ -17,14 +16,12 @@ ENV USER_PASSWORD Sp00kyP4SS!
 #Set home enviroment
 ENV HOME /home/$NORMAL_USER
 
-#Set Node paths
-ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION 10.16.0
-ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
-ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+#Database Variables
+ENV DATABASE_NAME exampledb
+ENV DATABASE_USER craig
+ENV DATABASE_PASSWORD Sp00kyP4SS!
 
-#Set Gradle Version
-ENV GRADLE_VERSION gradle 4.8.1
+EXPOSE 3306
 
 #Use bash from now on
 SHELL ["/bin/bash", "-c"]
@@ -39,6 +36,10 @@ RUN apt-get update -y && apt-get -y install \
     nano \
     openjdk-8-jdk \ 
     curl \
+    libaio1 \
+    libaio-dev \
+    mariadb-server \
+    mariadb-client \
     software-properties-common \
     python \
     wget \
@@ -58,6 +59,17 @@ RUN update-locale LANG=$LOCALE_CODE
 #Fix Systemctl because you forgot how to use SystemV
 RUN wget https://raw.githubusercontent.com/gdraheim/docker-systemctl-replacement/master/files/docker/systemctl.py -O /usr/local/bin/systemctl
 RUN chmod a+x /usr/local/bin/systemctl
+
+#Create Databases
+RUN service mysql start \ 
+    && mysql -u root -e "SET GLOBAL innodb_large_prefix=ON;" \
+    && mysql -u root -e "SET GLOBAL innodb_file_format=Barracuda;" \
+    && mysql -u root -e "SET GLOBAL innodb_file_per_table=ON;" \
+    && mysql -u root -e "SET GLOBAL innodb_default_row_format=dynamic" \
+    && mysql -u root -e "CREATE DATABASE ${DATABASE_NAME} CHARACTER SET utf8 COLLATE utf8_general_ci;" \
+    && mysql -u root -e "CREATE USER 'giteauser'@'localhost' IDENTIFIED BY '${DATABASE_PASSWORD}';" \
+    && mysql -u root -e "GRANT ALL PRIVILEGES ON gitea.* TO '${DATABASE_USER}'@'localhost' IDENTIFIED BY '${DATABASE_PASSWORD}' WITH GRANT OPTION;" \
+    && mysql -u root -e "FLUSH PRIVILEGES;"
 
 #Add a standard user for later and open permissions to the needed directories
 RUN useradd -m -s /bin/bash $NORMAL_USER
