@@ -79,7 +79,8 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "389:389/tcp"
+        - "1050:389/tcp"
+        - "1060:636/tcp"
     logging:
       build: ./logging
       image: "logging"
