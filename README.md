@@ -9,20 +9,19 @@ In it's inital iteration, *it is not for production systems*.  All modules will 
 
 The modules planned are as follows with inital technolgies used:
 
-- LDAP ~ OpenLDAP
-- DNS  ~ OpenDNS
-- DHCP ~ DHCPD
-- SQL Database ~ MySQL/MariaDB
-- NoSQL Database ~ MongoDB/CouchDB
-- Firewall ~ PfSense (or Linux alterative)
-- Web Server ~ Apache
-- Local-hosted Git Version Control ~ Gitea
-- Monitoring ~ Nagios Core/LibreNMS/Prometheus
-- Logging ~ GrayLog/ELK Stack/Prometheus
-- CI/CD ~ Jenkins/Travis
-- Service Desk ~ oSTicket
-- Wiki-Style Documentation ~ Docuwiki
 - Board ~ WeKan
-
+- CI/CD ~ Jenkins/Travis
+- DHCP ~ DHCPD
+- DNS  ~ OpenDNS
+- Firewall ~ PfSense (or Linux alterative)
+- LDAP ~ OpenLDAP
+- Local-hosted Git Version Control ~ Gitea
+- Logging ~ GrayLog/ELK Stack/Prometheus
+- Monitoring ~ Nagios Core/LibreNMS/Prometheus
+- NoSQL Database ~ MongoDB/CouchDB
+- SQL Database ~ MySQL/MariaDB
+- Service Desk ~ oSTicket
+- Web Server ~ Apache
+- Wiki-Style Documentation ~ Docuwiki
 
 While these modules may change with time, in this iteration, this is the technlogies which are being explored.
