@@ -67,8 +67,8 @@ RUN service mysql start \
     && mysql -u root -e "SET GLOBAL innodb_file_per_table=ON;" \
     && mysql -u root -e "SET GLOBAL innodb_default_row_format=dynamic" \
     && mysql -u root -e "CREATE DATABASE ${DATABASE_NAME} CHARACTER SET utf8 COLLATE utf8_general_ci;" \
-    && mysql -u root -e "CREATE USER 'giteauser'@'localhost' IDENTIFIED BY '${DATABASE_PASSWORD}';" \
-    && mysql -u root -e "GRANT ALL PRIVILEGES ON gitea.* TO '${DATABASE_USER}'@'localhost' IDENTIFIED BY '${DATABASE_PASSWORD}' WITH GRANT OPTION;" \
+    && mysql -u root -e "CREATE USER '${DATABASE_USER}'@'localhost' IDENTIFIED BY '${DATABASE_PASSWORD}';" \
+    && mysql -u root -e "GRANT ALL PRIVILEGES ON ${DATABASE_USER}.* TO '${DATABASE_USER}'@'localhost' IDENTIFIED BY '${DATABASE_PASSWORD}' WITH GRANT OPTION;" \
     && mysql -u root -e "FLUSH PRIVILEGES;"
 
 #Add a standard user for later and open permissions to the needed directories

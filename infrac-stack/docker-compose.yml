@@ -136,7 +136,9 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "2050:83/udp"
+        - "2050:80/tcp"
+        - "2051:443/tcp"
+        - "2052:3306/tcp"
     sql:
       build: ./sql
       image: "sql"
