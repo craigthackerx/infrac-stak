@@ -69,7 +69,7 @@ services:
         - "1060:22/tcp"
         - "1070:80/tcp"
         - "1080:443/tcp"
-      java-server:
+    java-server:
       build: ./java-server
       image: "java-server"
       container_name: infrac-stak-java-server
