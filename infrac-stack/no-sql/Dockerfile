@@ -105,4 +105,5 @@ RUN source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk install $GRADLE_VERSION
 
 #Set entrypoint scripts
 ENTRYPOINT echo $USER_PASSWORD | sudo -S service ssh start \
+           echo $USER_PASSWORD | sudo -S mongod --config /etc/mongod.conf \
         && tail -f /dev/null 
