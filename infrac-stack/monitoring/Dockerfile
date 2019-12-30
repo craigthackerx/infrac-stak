@@ -5,6 +5,11 @@ FROM ubuntu:latest
 ENV TZ=Europe/London
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
+#Setup Normal User
+ENV NORMAL_USER cthacker
+ENV USER_PASSWORD Sp00kyP4SS!
+ENV HOME /home/${NORMAL_USER}
+
 #Use Bash
 SHELL ["/bin/bash", "-c"]
 
@@ -86,12 +91,21 @@ RUN chown -R nagios:nagios /usr/local/nagios/libexec/eventhandlers
 ADD nagios.conf /etc/apache2/conf-available/nagios.conf
 
 #Make Nagios admin account & prepare apache
-RUN htpasswd -b -c /usr/local/nagios/etc/htpasswd.users nagiosadmin Sp00kyP4ss
+RUN htpasswd -b -c /usr/local/nagios/etc/htpasswd.users nagiosadmin $USER_PASSWORD
 RUN a2enconf nagios
 RUN a2enmod cgi rewrite
 
 #Add Scipts & Config
 RUN chmod a+x -R /usr/local/nagios
+
+#Add a standard user for later and open permissions to the needed directories, you're not important enough to use root 
+RUN useradd -m -s /bin/bash $NORMAL_USER 
+RUN usermod -aG sudo $NORMAL_USER
+RUN echo $NORMAL_USER:$USER_PASSWORD | chpasswd
+RUN chmod 777 /usr/local
+RUN chmod 777 -R $HOME
+USER $NORMAL_USER 
+
 
 #Expose Ports
 EXPOSE 80/tcp
