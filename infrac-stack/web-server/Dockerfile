@@ -27,23 +27,23 @@ RUN ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /
 
 #Install & update hings
 RUN apt-get update -y && apt-get -y install \ 
-    sudo \
-    bash \
-    nano \
-    openjdk-8-jdk \ 
-    curl \
-    software-properties-common \
-    python \
-    wget \
-    git \
-    apache2 \ 
-    locales \
-    ifupdown \
-    openssl \ 
-    openssh-server \ 
-    tmux \
-    unzip \
-    zip 
+        apache2 \
+        bash \
+        curl \
+        git \
+        ifupdown \
+        locales \
+        nano \
+        openjdk-8-jdk \
+        openssh-server \
+        openssl \
+        python \
+        software-properties-common \
+        sudo \
+        tmux \
+        unzip \
+        wget \
+        zip
 
 #Add Locale
 RUN locale-gen $LOCALE_CODE

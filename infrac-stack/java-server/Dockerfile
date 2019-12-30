@@ -22,22 +22,22 @@ RUN ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /
 
 #Update and install hings
 RUN apt-get update -y && apt-get -y install sudo \
-    apt-utils \
-    bash \
-    locales \
-    nano \
-    vim \ 
-    openjdk-8-jdk \ 
-    curl \
-    wget \
-    xmlstarlet \
-    git \
-    ifupdown \
-    openssl \ 
-    openssh-server \ 
-    tmux \
-    unzip \
-    zip 
+        apt-utils \
+        bash \
+        curl \
+        git \
+        ifupdown \
+        locales \
+        nano \
+        openjdk-8-jdk \
+        openssh-server \
+        openssl \
+        tmux \
+        unzip \
+        vim \
+        wget \
+        xmlstarlet \
+        zip
 
 #Add Locale
 RUN locale-gen $LOCALE_CODE

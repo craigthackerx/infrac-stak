@@ -31,43 +31,43 @@ RUN ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /
 
 #Install & update hings
 RUN apt-get update -y && apt-get -y install \ 
-    sudo \
-    apache2 \
-    php7.2 \
-    libapache2-mod-php7.2 \
-    php7.2-common \
-    php7.2-mysql \
-    php7.2-gmp \
-    php7.2-curl \
-    php7.2-intl \
-    php7.2-mbstring \
-    php7.2-xmlrpc \
-    php7.2-apcu \
-    php7.2-gd \
-    php7.2-bcmath \
-    php7.2-soap \
-    php7.2-ldap \
-    php7.2-imap \
-    php7.2-xml \
-    php7.2-cli \
-    php7.2-zip\
-    bash \
-    nano \
-    openjdk-8-jdk \ 
-    curl \
-    software-properties-common \
-    mariadb-server \
-    mariadb-client \
-    python \
-    wget \
-    git \
-    locales \
-    ifupdown \
-    openssl \ 
-    openssh-server \ 
-    tmux \
-    unzip \
-    zip 
+        apache2 \
+        bash \
+        curl \
+        git \
+        ifupdown \
+        libapache2-mod-php7.2 \
+        locales \
+        mariadb-client \
+        mariadb-server \
+        nano \
+        openjdk-8-jdk \
+        openssh-server \
+        openssl \
+        php7.2 \
+        php7.2-apcu \
+        php7.2-bcmath \
+        php7.2-cli \
+        php7.2-common \
+        php7.2-curl \
+        php7.2-gd \
+        php7.2-gmp \
+        php7.2-imap \
+        php7.2-intl \
+        php7.2-ldap \
+        php7.2-mbstring \
+        php7.2-mysql \
+        php7.2-soap \
+        php7.2-xml \
+        php7.2-xmlrpc \
+        php7.2-zip\
+        python \
+        software-properties-common \
+        sudo \
+        tmux \
+        unzip \
+        wget \
+        zip
 
 #Add Locale
 RUN locale-gen $LOCALE_CODE

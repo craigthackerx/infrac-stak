@@ -35,25 +35,25 @@ RUN ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /
 
 #Install & update hings
 RUN apt-get update -y && apt-get -y install \ 
-    apt-transport-https \
-    samba \
-    samba-common \
-    sudo \
-    bash \
-    nano \
-    openjdk-8-jdk \ 
-    curl \
-    software-properties-common \
-    python \
-    wget \
-    git \
-    locales \
-    ifupdown \
-    openssl \ 
-    openssh-server \ 
-    tmux \
-    unzip \
-    zip 
+        apt-transport-https \
+        bash \
+        curl \
+        git \
+        ifupdown \
+        locales \
+        nano \
+        openjdk-8-jdk \
+        openssh-server \
+        openssl \
+        python \
+        samba \
+        samba-common \
+        software-properties-common \
+        sudo \
+        tmux \
+        unzip \
+        wget \
+        zip
 
 #Make folder structure for webmin
 RUN mkdir /media/storage /data /data/samba /data/webmin

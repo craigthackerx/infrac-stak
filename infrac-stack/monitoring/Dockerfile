@@ -15,38 +15,39 @@ SHELL ["/bin/bash", "-c"]
 
 #Update and install things
 RUN apt-get update -y && apt-get -y install \
-    sudo \
-    bash \
-    nano \
-    vim \
-    curl \
-    wget \
-    git \
-    build-essential \
-    nagios-plugins \
-    openssl \
-    ifupdown \ 
-    openssh-server \
-    software-properties-common \
-    tmux \
-    gnupg \
-    apache2 \
-    php \
-    libapache2-mod-php \
-    php-gd \
-    libgd-dev \ 
-    fonts-liberation \
-    libappindicator3-1 \
-    libgtk-3-0 \
-    libxss1 \
-    libssl-dev \
-    lsb-release \
-    locales \
-    python \
-    perl \
-    xdg-utils \
-    unzip \
-    zip 
+        apache2 \
+        bash \
+        build-essential \
+        curl \
+        fonts-liberation \
+        git \
+        gnupg \
+        ifupdown \
+        libapache2-mod-php \
+        libappindicator3-1 \
+        libgd-dev \
+        libgtk-3-0 \
+        libssl-dev \
+        libxss1 \
+        locales \
+        lsb-release \
+        nagios-nrpe-server \
+        nagios-plugins \
+        nano \
+        openssh-server \
+        openssl \
+        perl \
+        php \
+        php-gd \
+        python \
+        software-properties-common \
+        sudo \
+        tmux \
+        unzip \
+        vim \
+        wget \
+        xdg-utils \
+        zip
 
 #Clean the update cache
 RUN apt-get autoclean
@@ -115,5 +116,6 @@ WORKDIR /usr/local/nagios
 
 ENTRYPOINT echo $USER_PASSWORD | sudo -S service apache2 start \
         && echo $USER_PASSWORD | sudo -S service nagios start \
+        && echo $USER_PASSWORD | sudo -S service nagios-nrpe-server start \
         && echo $USER_PASSWORD | sudo -S service ssh start \
         && tail -f /dev/null 

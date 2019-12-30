@@ -35,30 +35,30 @@ RUN ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /
 
 #Install & update hings
 RUN apt-get update -y && apt-get -y install \ 
-    apt-utils \
-    bash \
-    build-essential \
-    bzip2 \
-    ca-certificates \
-    curl \
-    g++ \
-    git \
-    gnupg \
-    gosu \
-    ifupdown \
-    libarchive-tools \
-    locales \
-    nano \
-    openjdk-8-jdk \
-    openssh-server \
-    openssl \
-    python3 \
-    software-properties-common \
-    sudo \
-    tmux \
-    unzip \
-    wget \
-    zip
+        apt-utils \
+        bash \
+        build-essential \
+        bzip2 \
+        ca-certificates \
+        curl \
+        g++ \
+        git \
+        gnupg \
+        gosu \
+        ifupdown \
+        libarchive-tools \
+        locales \
+        nano \
+        openjdk-8-jdk \
+        openssh-server \
+        openssl \
+        python3 \
+        software-properties-common \
+        sudo \
+        tmux \
+        unzip \
+        wget \
+        zip
 
 #Add Locale
 RUN locale-gen $LOCALE_CODE
@@ -102,3 +102,7 @@ RUN source $NVM_DIR/nvm.sh \
 #Install SDKMAN! aswell
 RUN curl -s "https://get.sdkman.io" | bash
 RUN source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk install $GRADLE_VERSION
+
+#Set entrypoint scripts
+ENTRYPOINT echo $USER_PASSWORD | sudo -S service ssh start \
+        && tail -f /dev/null 

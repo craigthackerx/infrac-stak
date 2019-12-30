@@ -24,30 +24,30 @@ RUN ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /
 
 #Install & update hings
 RUN apt-get update -y && apt-get -y install \ 
-    sudo \
-    ca-certificates \
-    tzdata \
-    rsync \
-    bash \
-    nano \
-    libaio1 \
-    libaio-dev \
-    mariadb-server \
-    mariadb-client \
-    openjdk-8-jdk \ 
-    curl \
-    nginx \ 
-    software-properties-common \
-    python \
-    wget \
-    git \
-    locales \
-    ifupdown \
-    openssl \ 
-    openssh-server \ 
-    tmux \
-    unzip \
-    zip
+        bash \
+        ca-certificates \
+        curl \
+        git \
+        ifupdown \
+        libaio-dev \
+        libaio1 \
+        locales \
+        mariadb-client \
+        mariadb-server \
+        nano \
+        nginx \
+        openjdk-8-jdk \
+        openssh-server \
+        openssl \
+        python \
+        rsync \
+        software-properties-common \
+        sudo \
+        tmux \
+        tzdata \
+        unzip \
+        wget \
+        zip
 
 #Add Locale
 RUN locale-gen $LOCALE_CODE

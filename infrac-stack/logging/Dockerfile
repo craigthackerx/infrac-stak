@@ -33,22 +33,22 @@ RUN ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /
 
 #Install & update hings
 RUN apt-get update -y && apt-get -y install \ 
-    sudo \
-    bash \
-    nano \
-    openjdk-8-jdk \ 
-    curl \
-    software-properties-common \
-    python \
-    wget \
-    git \
-    locales \
-    ifupdown \
-    openssl \ 
-    openssh-server \ 
-    tmux \
-    unzip \
-    zip 
+        bash \
+        curl \
+        git \
+        ifupdown \
+        locales \
+        nano \
+        openjdk-8-jdk \
+        openssh-server \
+        openssl \
+        python \
+        software-properties-common \
+        sudo \
+        tmux \
+        unzip \
+        wget \
+        zip
 
 #Add Locale
 RUN locale-gen $LOCALE_CODE
@@ -64,3 +64,7 @@ RUN usermod -aG sudo $NORMAL_USER
 RUN echo $NORMAL_USER:$USER_PASSWORD | chpasswd
 RUN chmod 777 -R /usr/local
 USER $NORMAL_USER
+
+#Set entrypoint scripts
+ENTRYPOINT echo $USER_PASSWORD | sudo -S service ssh start \
+        && tail -f /dev/null 
