@@ -9,7 +9,8 @@ services:
       tty:  true
       privileged: false
       ports:
-        - "2000:80/tcp"
+        - "1000:80/tcp"
+        - "1001:443/tcp"
     ci:
       build: ./ci
       image: "ci"
@@ -20,7 +21,8 @@ services:
       environment:
        - ACCEPT_EULA=Y
       ports:
-        - "1000:8080/tcp" #Jenkins is hosted on 8080/tcp
+        - "1005:8080/tcp"
+        - "1006:443/tcp"
     dhcp:
       build: ./dhcp
       image: "dhcp"

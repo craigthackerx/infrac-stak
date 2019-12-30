@@ -91,7 +91,6 @@ RUN a2enconf nagios
 RUN a2enmod cgi rewrite
 
 #Add Scipts & Config
-ADD libexec /usr/local/nagios/libexec/
 RUN chmod a+x -R /usr/local/nagios
 
 #Expose Ports
