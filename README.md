@@ -1,4 +1,7 @@
 # infrac-stak
+
+![Gif](infra-stak.gif)
+
 A infrastructure as code stack, created with Docker.  Modular &amp; Agnostic by default.
 
 The project is treated as an entry point for many junior DevOps or System Administrators looking to modernise there infrastructre stack, and is being used as a learning material for contributors and observers. It is named as it is - with C at the end of infra - as to represent the project's creators first inital with the letter being taken from the stack word to ensure the same line character length of the entire name. Also, it generally sounds funny.
