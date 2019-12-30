@@ -48,6 +48,7 @@ services:
         - "1030:53/tcp"
         - "1031:56/tcp"
         - "1032:8080/tcp"
+        - "1033:8443/tcp"
     firewall:
       build: ./firewall
       image: "firewall"

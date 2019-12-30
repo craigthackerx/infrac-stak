@@ -73,3 +73,6 @@ RUN chmod a+x /etc/dnsmasq.conf
 
 #Run DNSMASQ
 ENTRYPOINT ["webproc","--config","/etc/dnsmasq.conf","--","dnsmasq","--no-daemon"]
+
+USER ${NORMAL_USER}
+WORKDIR ${HOME}
