@@ -3,11 +3,16 @@ FROM ubuntu:latest
 
 #Set Enviroment Variables for personal preference below
 
+EXPOSE 80 53 56 443 8080
+
 #Set timezone
 ENV TIME_ZONE=Europe/London
 
 #Set System Locale 
 ENV LOCALE_CODE en_GB.UTF-8
+
+ENV WEBPROC_VERSION 0.2.2
+ENV WEBPROC_URL https://github.com/jpillora/webproc/releases/download/$WEBPROC_VERSION/webproc_linux_amd64.gz
 
 #Set user for personal preference and password. These are used later on.
 ENV NORMAL_USER cthacker
@@ -15,15 +20,6 @@ ENV USER_PASSWORD Sp00kyP4SS!
 
 #Set home enviroment
 ENV HOME /home/$NORMAL_USER
-
-#Set Node paths
-ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION 10.16.0
-ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
-ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
-
-#Set Gradle Version
-ENV GRADLE_VERSION gradle 4.8.1
 
 #Use bash from now on
 SHELL ["/bin/bash", "-c"]
@@ -63,4 +59,17 @@ RUN useradd -m -s /bin/bash $NORMAL_USER
 RUN usermod -aG sudo $NORMAL_USER
 RUN echo $NORMAL_USER:$USER_PASSWORD | chpasswd
 RUN chmod 777 -R /usr/local
-USER $NORMAL_USER
+
+#Fetch the Webproc & DNSMASQ libaries
+RUN apt-get update -y && apt-get install -y dnsmasq curl \
+	&& curl -sL $WEBPROC_URL | gzip -d - > /usr/local/bin/webproc \
+	&& chmod +x /usr/local/bin/webproc 
+
+#Configure DNSMASQ
+RUN mkdir -p /etc/default/
+RUN echo -e "ENABLED=1\nIGNORE_RESOLVCONF=yes" > /etc/default/dnsmasq
+COPY dnsmasq.conf /etc/dnsmasq.conf
+RUN chmod a+x /etc/dnsmasq.conf
+
+#Run DNSMASQ
+ENTRYPOINT ["webproc","--config","/etc/dnsmasq.conf","--","dnsmasq","--no-daemon"]

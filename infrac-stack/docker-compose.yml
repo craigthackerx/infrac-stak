@@ -46,6 +46,8 @@ services:
         - ACCEPT_EULA=Y
       ports:
         - "1030:53/tcp"
+        - "1031:56/tcp"
+        - "1032:8080/tcp"
     firewall:
       build: ./firewall
       image: "firewall"
@@ -136,8 +138,8 @@ services:
         - ACCEPT_EULA=Y
       ports:
         - "2040:27017/tcp"
-        - "2042:80/tcp"
-        - "2045:443/tcp"
+        - "2041:80/tcp"
+        - "2042:443/tcp"
     servicedesk:
       build: ./servicedesk
       image: "servicedesk"
