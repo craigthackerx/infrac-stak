@@ -27,6 +27,6 @@ The modules planned are as follows with inital technolgies used:
 - SQL Database ~ MariaDB
 - Service Desk ~ oSTicket
 - Web Server ~ Apache HTTPD
-- Wiki-Style Documentation ~ Docuwiki
+- Wiki-Style Documentation ~ Dokuwiki
 
 While these modules may change with time, in this iteration, this is the technlogies which are being explored.
