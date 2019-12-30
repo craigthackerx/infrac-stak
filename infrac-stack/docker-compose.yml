@@ -1,5 +1,16 @@
 version: '3'
 services:
+    alerting:
+      build: ./alerting
+      image: "alerting"
+      container_name: infrac-stak-alerting
+      restart: unless-stopped
+      stdin_open: true
+      tty:  true
+      privileged: false
+      ports:
+        - "1000:80/tcp"
+        - "1010:443/tcp"
     boards:
       build: ./boards
       image: "boards"
@@ -9,8 +20,8 @@ services:
       tty:  true
       privileged: false
       ports:
-        - "1000:80/tcp"
-        - "1001:443/tcp"
+        - "1020:80/tcp"
+        - "1030:443/tcp"
     ci:
       build: ./ci
       image: "ci"
@@ -21,8 +32,8 @@ services:
       environment:
        - ACCEPT_EULA=Y
       ports:
-        - "1005:8080/tcp"
-        - "1006:443/tcp"
+        - "1040:8080/tcp"
+        - "1050:443/tcp"
     dhcp:
       build: ./dhcp
       image: "dhcp"
@@ -33,8 +44,8 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "1010:67/udp"
-        - "1020:68/udp"
+        - "1060:67/udp"
+        - "1070:68/udp"
     dns:
       build: ./dns
       image: "dns"
@@ -45,10 +56,10 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "1030:53/tcp"
-        - "1031:56/tcp"
-        - "1032:8080/tcp"
-        - "1033:8443/tcp"
+        - "1080:53/tcp"
+        - "1090:56/tcp"
+        - "1100:8080/tcp"
+        - "1110:8443/tcp"
     firewall:
       build: ./firewall
       image: "firewall"
@@ -59,7 +70,7 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "1040:75/tcp"
+        - "1120:75/tcp"
     git:
       build: ./git
       image: "git"
@@ -70,10 +81,10 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "1050:3306/tcp"
-        - "1060:22/tcp"
-        - "1070:80/tcp"
-        - "1080:443/tcp"
+        - "1130:3306/tcp"
+        - "1140:22/tcp"
+        - "1150:80/tcp"
+        - "1160:443/tcp"
     java-server:
       build: ./java-server
       image: "java-server"
@@ -84,8 +95,8 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "1090:8080/tcp"
-        - "1100:8443/tcp"
+        - "1170:8080/tcp"
+        - "1180:8443/tcp"
     ldap:
       build: ./ldap
       image: "ldap"
@@ -96,8 +107,8 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "2000:389/tcp"
-        - "2010:636/tcp"
+        - "1190:389/tcp"
+        - "1200:636/tcp"
     logging:
       build: ./logging
       image: "logging"
@@ -108,10 +119,10 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "2020:80/tcp"
-        - "2021:443/tcp"
-        - "2022:27017/tcp"
-        - "2023:444/tcp"
+        - "1210:80/tcp"
+        - "1220:443/tcp"
+        - "1230:27017/tcp"
+        - "1240:444/tcp"
     monitoring:
       build: ./monitoring
       image: "monitoring"
@@ -122,12 +133,12 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "2030:5666/udp"
-        - "2031:5666/tcp"
-        - "2032:12489/udp"
-        - "2033:12489/tcp"
-        - "2035:80/tcp"
-        - "2036:443/tcp"    
+        - "1250:5666/udp"
+        - "1260:5666/tcp"
+        - "1270:12489/udp"
+        - "1280:12489/tcp"
+        - "1290:80/tcp"
+        - "1300:443/tcp"    
     no-sql:
       build: ./no-sql
       image: "no-sql"
@@ -138,9 +149,9 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "2040:27017/tcp"
-        - "2041:80/tcp"
-        - "2042:443/tcp"
+        - "1310:27017/tcp"
+        - "1320:80/tcp"
+        - "1330:443/tcp"
     servicedesk:
       build: ./servicedesk
       image: "servicedesk"
@@ -151,9 +162,9 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "2050:80/tcp"
-        - "2060:443/tcp"
-        - "2070:3306/tcp"
+        - "1340:80/tcp"
+        - "1350:443/tcp"
+        - "1360:3306/tcp"
     sql:
       build: ./sql
       image: "sql"
@@ -164,8 +175,8 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "2080:3306/tcp"
-        - "2090:33060/tcp"
+        - "1370:3306/tcp"
+        - "1380:33060/tcp"
     web-server:
       build: ./web-server
       image: "web-server"
@@ -176,8 +187,8 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "2100:80/tcp"
-        - "2110:443/tcp"
+        - "1390:80/tcp"
+        - "1400:443/tcp"
     webmin:
       build: ./webmin
       image: "webmin"
@@ -188,9 +199,9 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "3000:80/tcp"
-        - "3010:139/tcp"
-        - "3020:445/tcp"
+        - "1410:80/tcp"
+        - "1420:139/tcp"
+        - "1430:443/tcp"
     wiki:
       build: ./wiki
       image: "wiki"
@@ -201,5 +212,5 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "3040:80/tcp"
-        - "3050:443/tcp"
+        - "1440:80/tcp"
+        - "1450:443/tcp"

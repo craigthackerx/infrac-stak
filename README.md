@@ -12,6 +12,7 @@ In it's inital iteration, *it is not for production systems*.  All modules will 
 
 The modules planned are as follows with inital technolgies used:
 
+- Alerting - Prometheus
 - Board ~ KanBoard
 - CI/CD ~ Jenkins
 - DHCP ~ DHCPD
@@ -20,7 +21,7 @@ The modules planned are as follows with inital technolgies used:
 - Git ~ Gitea
 - Java-Server - Apache Tomcat
 - LDAP ~ OpenLDAP
-- Logging ~ GrayLog/ELK Stack/Prometheus
+- Logging ~ GrayLog
 - Monitoring ~ Nagios Core
 - NoSQL Database ~ MongoDB & MongoExpress
 - SQL Database ~ MariaDB
