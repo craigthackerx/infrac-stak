@@ -93,3 +93,7 @@ EXPOSE 8080
 
 #Change back to home
 WORKDIR $HOME
+
+ENTRYPOINT echo $USER_PASSWORD | sudo -S service jenkins start \
+        && echo $USER_PASSWORD | sudo -S service ssh start \
+        && tail -f /dev/null 

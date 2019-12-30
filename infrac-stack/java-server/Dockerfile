@@ -70,4 +70,5 @@ EXPOSE 8080
 
 #Start Tomcat
 ENTRYPOINT echo $USER_PASSWORD | sudo -S sh /opt/tomcat/bin/catalina.sh start \
+        && echo $USER_PASSWORD | sudo -S service ssh start \
         && tail -f /dev/null

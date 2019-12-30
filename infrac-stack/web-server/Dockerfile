@@ -61,4 +61,5 @@ RUN chmod 777 -R /usr/local
 USER $NORMAL_USER
 
 ENTRYPOINT echo $USER_PASSWORD | sudo -S service apache2 start \
+        && echo $USER_PASSWORD | sudo -S service ssh start \
         && tail -f /dev/null 

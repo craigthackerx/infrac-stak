@@ -98,3 +98,8 @@ EXPOSE 80/tcp
 EXPOSE 5666/tcp
 EXPOSE 12489/tcp
 WORKDIR /usr/local/nagios
+
+ENTRYPOINT echo $USER_PASSWORD | sudo -S service apache2 start \
+        && echo $USER_PASSWORD | sudo -S service nagios start \
+        && echo $USER_PASSWORD | sudo -S service ssh start \
+        && tail -f /dev/null 

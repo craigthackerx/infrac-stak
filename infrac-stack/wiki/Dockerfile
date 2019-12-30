@@ -64,3 +64,6 @@ RUN usermod -aG sudo $NORMAL_USER
 RUN echo $NORMAL_USER:$USER_PASSWORD | chpasswd
 RUN chmod 777 -R /usr/local
 USER $NORMAL_USER
+
+ENTRYPOINT echo $USER_PASSWORD | sudo -S service ssh start \
+        && tail -f /dev/null
