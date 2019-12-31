@@ -61,17 +61,6 @@ services:
         - "1090:56/tcp"
         - "1100:8080/tcp"
         - "1110:8443/tcp"
-    firewall:
-      build: ./firewall
-      image: "firewall"
-      container_name: infrac-stak-firewall
-      restart: unless-stopped
-      stdin_open: true
-      tty:  true
-      environment:
-        - ACCEPT_EULA=Y
-      ports:
-        - "1120:75/tcp"
     git:
       build: ./git
       image: "git"

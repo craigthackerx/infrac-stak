@@ -2,6 +2,7 @@
 FROM ubuntu:latest
 
 #Set Enviroment Variables for personal preference below
+ARG DEBIAN_FRONTEND=noninteractive
 
 #Set timezone
 ENV TIME_ZONE=Europe/London
@@ -15,15 +16,6 @@ ENV USER_PASSWORD Sp00kyP4SS!
 
 #Set home enviroment
 ENV HOME /home/$NORMAL_USER
-
-#Set Node paths
-ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION 10.16.0
-ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
-ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
-
-#Set Gradle Version
-ENV GRADLE_VERSION gradle 4.8.1
 
 #Use bash from now on
 SHELL ["/bin/bash", "-c"]
@@ -50,12 +42,23 @@ RUN apt-get update -y && apt-get -y install \
         wget \
         zip
 
+RUN apt-get -q -y update \
+        && apt-get -q -y -o "DPkg::Options::=--force-confold" -o "DPkg::Options::=--force-confdef" install apt-utils \
+        && rm /etc/dpkg/dpkg.cfg.d/excludes \
+        && apt-get -q -y -o "DPkg::Options::=--force-confold" -o "DPkg::Options::=--force-confdef" install dumb-init isc-dhcp-server man \
+        && apt-get -q -y autoremove \
+        && apt-get -q -y clean \
+        && rm -rf /var/lib/apt/lists/* \
+        && mkdir /data \
+        && chmod 777 -R /data
+ADD dhcpd.conf /data/dhcpd.conf
+
 #Add Locale
 RUN locale-gen $LOCALE_CODE
 RUN update-locale LANG=$LOCALE_CODE
 
 #Fix Systemctl because you forgot how to use SystemV
-RUN wget https://raw.githubusercontent.com/gdraheim/docker-systemctl-replacement/master/files/docker/systemctl.py -O /usr/local/bin/systemctl
+RUN https://raw.githubusercontent.com/gdraheim/docker-systemctl-replacement/master/files/docker/systemctl.py -O /usr/local/bin/systemctl
 RUN chmod a+x /usr/local/bin/systemctl
 
 #Add a standard user for later and open permissions to the needed directories
@@ -63,8 +66,11 @@ RUN useradd -m -s /bin/bash $NORMAL_USER
 RUN usermod -aG sudo $NORMAL_USER
 RUN echo $NORMAL_USER:$USER_PASSWORD | chpasswd
 RUN chmod 777 -R /usr/local
+COPY entrypoint.sh $HOME/entrypoint.sh
+RUN chmod a+x ${HOME}/entrypoint.sh
 USER $NORMAL_USER
 
 #Set entrypoint scripts
 ENTRYPOINT echo $USER_PASSWORD | sudo -S service ssh start \
-        && tail -f /dev/null 
+           && echo $USER_PASSWORD | sudo -S sh $HOME/entrypoint.sh \  
+           && tail -f /dev/null 

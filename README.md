@@ -17,7 +17,6 @@ The modules planned are as follows with inital technolgies used:
 - CI/CD ~ Jenkins
 - DHCP ~ DHCPD
 - DNS  ~ DNSMASQ & WebProc GUI 
-- Firewall ~ PfSense (or Linux alterative)
 - Git ~ Gitea
 - Java-Server - Apache Tomcat
 - LDAP ~ OpenLDAP
