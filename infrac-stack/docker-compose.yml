@@ -11,6 +11,7 @@ services:
       ports:
         - "1000:80/tcp"
         - "1010:443/tcp"
+        - "1011:9090/tcp"
     boards:
       build: ./boards
       image: "boards"

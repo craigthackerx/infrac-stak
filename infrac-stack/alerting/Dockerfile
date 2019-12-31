@@ -16,14 +16,10 @@ ENV USER_PASSWORD Sp00kyP4SS!
 #Set home enviroment
 ENV HOME /home/$NORMAL_USER
 
-#Set Node paths
-ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION 10.16.0
-ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
-ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+#Prometheus Version
+ENV RELEASE 2.2.1
 
-#Set Gradle Version
-ENV GRADLE_VERSION gradle 4.8.1
+EXPOSE 80 443 9090 
 
 #Use bash from now on
 SHELL ["/bin/bash", "-c"]
@@ -58,6 +54,20 @@ RUN update-locale LANG=$LOCALE_CODE
 RUN wget https://raw.githubusercontent.com/gdraheim/docker-systemctl-replacement/master/files/docker/systemctl.py -O /usr/local/bin/systemctl
 RUN chmod a+x /usr/local/bin/systemctl
 
+#Make prometheus group and user
+RUN groupadd --system prometheus \
+ && useradd -s /sbin/nologin -r -g prometheus prometheus
+
+RUN wget https://github.com/prometheus/prometheus/releases/download/v${RELEASE}/prometheus-${RELEASE}.linux-amd64.tar.gz \
+        && tar xvf prometheus-${RELEASE}.linux-amd64.tar.gz \
+        && cd prometheus-${RELEASE}.linux-amd64/ \
+        && mkdir -p /etc/prometheus/{rules,rules.d,files_sd}  /var/lib/prometheus \
+        && cp prometheus promtool /usr/local/bin/ \
+        && chown -R prometheus:prometheus /etc/prometheus/  /var/lib/prometheus/ \
+        && chmod -R 775 /etc/prometheus/ /var/lib/prometheus/
+ADD prometheus.yml /etc/prometheus/prometheus.yml
+ADD prometheus.service /etc/systemd/system/prometheus.service
+
 #Add a standard user for later and open permissions to the needed directories
 RUN useradd -m -s /bin/bash $NORMAL_USER
 RUN usermod -aG sudo $NORMAL_USER
@@ -67,4 +77,5 @@ USER $NORMAL_USER
 
 #Set entrypoint scripts
 ENTRYPOINT echo $USER_PASSWORD | sudo -S service ssh start \
+        && echo $USER_PASSWORD | sudo -S prometheus --config.file=/etc/prometheus/prometheus.yml \
         && tail -f /dev/null 
