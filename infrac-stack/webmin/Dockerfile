@@ -18,15 +18,6 @@ ENV LOCALE_CODE en_GB.UTF-8
 ENV NORMAL_USER cthacker
 ENV USER_PASSWORD Sp00kyP4SS!
 
-#Set Node paths
-ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION 10.16.0
-ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
-ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
-
-#Set Gradle Version
-ENV GRADLE_VERSION gradle 4.8.1
-
 #Use bash from now on
 SHELL ["/bin/bash", "-c"]
 
@@ -55,12 +46,6 @@ RUN apt-get update -y && apt-get -y install \
         wget \
         zip
 
-#Make folder structure for webmin
-RUN mkdir /media/storage /data /data/samba /data/webmin
-
-#Add Volume for storage
-VOLUME /data
-
 #Add Locale
 RUN locale-gen $LOCALE_CODE
 RUN update-locale LANG=$LOCALE_CODE
@@ -68,6 +53,12 @@ RUN update-locale LANG=$LOCALE_CODE
 #Fix Systemctl because you forgot how to use SystemV
 RUN wget https://raw.githubusercontent.com/gdraheim/docker-systemctl-replacement/master/files/docker/systemctl.py -O /usr/local/bin/systemctl
 RUN chmod a+x /usr/local/bin/systemctl
+
+#Make folder structure for webmin
+RUN mkdir /media/storage /data /data/samba /data/webmin
+
+#Add Volume for storage
+VOLUME /data
 
 #Add Webmin source
 RUN echo "deb https://download.webmin.com/download/repository sarge contrib" >> /etc/apt/sources.list && \
