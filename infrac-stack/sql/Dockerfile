@@ -21,7 +21,7 @@ ENV DATABASE_NAME exampledb
 ENV DATABASE_USER craig
 ENV DATABASE_PASSWORD Sp00kyP4SS!
 
-EXPOSE 3306
+EXPOSE 80 3306
 
 #Use bash from now on
 SHELL ["/bin/bash", "-c"]
@@ -31,6 +31,7 @@ RUN ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /
 
 #Install & update hings
 RUN apt-get update -y && apt-get -y install \ 
+        apache2 \
         bash \
         curl \
         git \
@@ -59,6 +60,11 @@ RUN update-locale LANG=$LOCALE_CODE
 #Fix Systemctl because you forgot how to use SystemV
 RUN wget https://raw.githubusercontent.com/gdraheim/docker-systemctl-replacement/master/files/docker/systemctl.py -O /usr/local/bin/systemctl
 RUN chmod a+x /usr/local/bin/systemctl
+
+#Install php
+RUN export DEBIAN_FRONTEND=noninteractive \ 
+        && apt-get install -y php-mbstring php-gettext \
+        && apt install -y phpmyadmin
 
 #Create Databases
 RUN service mysql start \ 
