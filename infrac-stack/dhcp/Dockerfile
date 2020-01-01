@@ -57,8 +57,8 @@ ADD dhcpd.conf /data/dhcpd.conf
 RUN locale-gen $LOCALE_CODE
 RUN update-locale LANG=$LOCALE_CODE
 
-#Fix Systemctl because you forgot how to use SystemV
-RUN https://raw.githubusercontent.com/gdraheim/docker-systemctl-replacement/master/files/docker/systemctl.py -O /usr/local/bin/systemctl
+#Fix Systemctl in Docker container
+RUN wget https://raw.githubusercontent.com/gdraheim/docker-systemctl-replacement/master/files/docker/systemctl.py -O /usr/local/bin/systemctl
 RUN chmod a+x /usr/local/bin/systemctl
 
 #Add a standard user for later and open permissions to the needed directories
@@ -72,5 +72,5 @@ USER $NORMAL_USER
 
 #Set entrypoint scripts
 ENTRYPOINT echo $USER_PASSWORD | sudo -S service ssh start \
-           && echo $USER_PASSWORD | sudo -S sh $HOME/entrypoint.sh \  
+#           && echo $USER_PASSWORD | sudo -S sh $HOME/entrypoint.sh \  Subnet conifugration needs to be set before this script will work
            && tail -f /dev/null 

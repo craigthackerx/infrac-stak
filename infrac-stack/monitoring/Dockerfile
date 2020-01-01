@@ -31,7 +31,6 @@ RUN apt-get update -y && apt-get -y install \
         libxss1 \
         locales \
         lsb-release \
-        nagios-nrpe-server \
         nagios-plugins \
         nano \
         openssh-server \
@@ -97,7 +96,7 @@ RUN a2enconf nagios
 RUN a2enmod cgi rewrite
 
 #Add Scipts & Config
-RUN chmod a+x -R /usr/local/nagios
+RUN chmod 777 -R /usr/local/nagios
 
 #Add a standard user for later and open permissions to the needed directories, you're not important enough to use root 
 RUN useradd -m -s /bin/bash $NORMAL_USER 
@@ -116,6 +115,5 @@ WORKDIR /usr/local/nagios
 
 ENTRYPOINT echo $USER_PASSWORD | sudo -S service apache2 start \
         && echo $USER_PASSWORD | sudo -S service nagios start \
-        && echo $USER_PASSWORD | sudo -S service nagios-nrpe-server start \
         && echo $USER_PASSWORD | sudo -S service ssh start \
         && tail -f /dev/null 

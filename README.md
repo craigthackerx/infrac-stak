@@ -1,6 +1,6 @@
 # infrac-stak
 
-![Gif](infra-stak.gif)
+![Gif](infrac-stak.gif)
 
 A infrastructure as code stack, created with Docker.  Modular &amp; Agnostic by default.
 
