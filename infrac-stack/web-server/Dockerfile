@@ -6,7 +6,6 @@ FROM ubuntu:latest
 #Set timezone
 ENV TIME_ZONE=Europe/London
 
-
 #Set System Locale 
 ENV LOCALE_CODE en_GB.UTF-8
 
@@ -17,14 +16,8 @@ ENV USER_PASSWORD Sp00kyP4SS!
 #Set home enviroment
 ENV HOME /home/$NORMAL_USER
 
-#Set Node paths
-ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION 10.16.0
-ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
-ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
-
-#Set Gradle Version
-ENV GRADLE_VERSION gradle 4.8.1
+#Ports
+EXPOSE 80 443
 
 #Use bash from now on
 SHELL ["/bin/bash", "-c"]
@@ -34,22 +27,23 @@ RUN ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /
 
 #Install & update hings
 RUN apt-get update -y && apt-get -y install \ 
-    sudo \
-    bash \
-    nano \
-    openjdk-8-jdk \ 
-    curl \
-    software-properties-common \
-    python \
-    wget \
-    git \
-    locales \
-    ifupdown \
-    openssl \ 
-    openssh-server \ 
-    tmux \
-    unzip \
-    zip 
+        apache2 \
+        bash \
+        curl \
+        git \
+        ifupdown \
+        locales \
+        nano \
+        openjdk-8-jdk \
+        openssh-server \
+        openssl \
+        python \
+        software-properties-common \
+        sudo \
+        tmux \
+        unzip \
+        wget \
+        zip
 
 #Add Locale
 RUN locale-gen $LOCALE_CODE
@@ -65,3 +59,7 @@ RUN usermod -aG sudo $NORMAL_USER
 RUN echo $NORMAL_USER:$USER_PASSWORD | chpasswd
 RUN chmod 777 -R /usr/local
 USER $NORMAL_USER
+
+ENTRYPOINT echo $USER_PASSWORD | sudo -S service apache2 start \
+        && echo $USER_PASSWORD | sudo -S service ssh start \
+        && tail -f /dev/null 

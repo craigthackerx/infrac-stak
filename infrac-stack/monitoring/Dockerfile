@@ -5,43 +5,48 @@ FROM ubuntu:latest
 ENV TZ=Europe/London
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
+#Setup Normal User
+ENV NORMAL_USER cthacker
+ENV USER_PASSWORD Sp00kyP4SS!
+ENV HOME /home/${NORMAL_USER}
+
 #Use Bash
 SHELL ["/bin/bash", "-c"]
 
 #Update and install things
 RUN apt-get update -y && apt-get -y install \
-    sudo \
-    bash \
-    nano \
-    vim \
-    curl \
-    wget \
-    git \
-    build-essential \
-    nagios-plugins \
-    openssl \
-    ifupdown \ 
-    openssh-server \
-    software-properties-common \
-    tmux \
-    gnupg \
-    apache2 \
-    php \
-    libapache2-mod-php \
-    php-gd \
-    libgd-dev \ 
-    fonts-liberation \
-    libappindicator3-1 \
-    libgtk-3-0 \
-    libxss1 \
-    libssl-dev \
-    lsb-release \
-    locales \
-    python \
-    perl \
-    xdg-utils \
-    unzip \
-    zip 
+        apache2 \
+        bash \
+        build-essential \
+        curl \
+        fonts-liberation \
+        git \
+        gnupg \
+        ifupdown \
+        libapache2-mod-php \
+        libappindicator3-1 \
+        libgd-dev \
+        libgtk-3-0 \
+        libssl-dev \
+        libxss1 \
+        locales \
+        lsb-release \
+        nagios-plugins \
+        nano \
+        openssh-server \
+        openssl \
+        perl \
+        php \
+        php-gd \
+        python \
+        software-properties-common \
+        sudo \
+        tmux \
+        unzip \
+        vim \
+        wget \
+        xdg-utils \
+        zip
 
 #Clean the update cache
 RUN apt-get autoclean
@@ -86,16 +91,29 @@ RUN chown -R nagios:nagios /usr/local/nagios/libexec/eventhandlers
 ADD nagios.conf /etc/apache2/conf-available/nagios.conf
 
 #Make Nagios admin account & prepare apache
-RUN htpasswd -b -c /usr/local/nagios/etc/htpasswd.users nagiosadmin Sp00kyP4ss
+RUN htpasswd -b -c /usr/local/nagios/etc/htpasswd.users nagiosadmin $USER_PASSWORD
 RUN a2enconf nagios
 RUN a2enmod cgi rewrite
 
 #Add Scipts & Config
-ADD libexec /usr/local/nagios/libexec/
-RUN chmod a+x -R /usr/local/nagios
+RUN chmod 777 -R /usr/local/nagios
+
+#Add a standard user for later and open permissions to the needed directories, you're not important enough to use root 
+RUN useradd -m -s /bin/bash $NORMAL_USER 
+RUN usermod -aG sudo $NORMAL_USER
+RUN echo $NORMAL_USER:$USER_PASSWORD | chpasswd
+RUN chmod 777 /usr/local
+RUN chmod 777 -R $HOME
+USER $NORMAL_USER 
+
 
 #Expose Ports
 EXPOSE 80/tcp
 EXPOSE 5666/tcp
 EXPOSE 12489/tcp
 WORKDIR /usr/local/nagios
+
+ENTRYPOINT echo $USER_PASSWORD | sudo -S service apache2 start \
+        && echo $USER_PASSWORD | sudo -S service nagios start \
+        && echo $USER_PASSWORD | sudo -S service ssh start \
+        && tail -f /dev/null 

@@ -27,6 +27,7 @@ ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 #Set Gradle Version
 ENV GRADLE_VERSION gradle 4.8.1
 
+ENV MONGO_VERSION 4.2.1
 #Use bash from now on
 SHELL ["/bin/bash", "-c"]
 
@@ -35,30 +36,30 @@ RUN ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /
 
 #Install & update hings
 RUN apt-get update -y && apt-get -y install \ 
-    apt-utils \
-    bash \
-    build-essential \
-    bzip2 \
-    ca-certificates \
-    curl \
-    g++ \
-    git \
-    gnupg \
-    gosu \
-    ifupdown \
-    libarchive-tools \
-    locales \
-    nano \
-    openjdk-8-jdk \
-    openssh-server \
-    openssl \
-    python3 \
-    software-properties-common \
-    sudo \
-    tmux \
-    unzip \
-    wget \
-    zip
+        apt-utils \
+        bash \
+        build-essential \
+        bzip2 \
+        ca-certificates \
+        curl \
+        g++ \
+        git \
+        gnupg \
+        gosu \
+        ifupdown \
+        libarchive-tools \
+        locales \
+        nano \
+        openjdk-8-jdk \
+        openssh-server \
+        openssl \
+        python3 \
+        software-properties-common \
+        sudo \
+        tmux \
+        unzip \
+        wget \
+        zip
 
 #Add Locale
 RUN locale-gen $LOCALE_CODE
@@ -72,11 +73,15 @@ RUN chmod a+x /usr/local/bin/systemctl
 RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 4B7C549A058F8B6B
 RUN echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb.list
 RUN apt-get update && apt-get install -y \
-    mongodb-org=4.2.1 \
-    mongodb-org-server=4.2.1 \
-    mongodb-org-shell=4.2.1 \
-    mongodb-org-mongos=4.2.1 \
-    mongodb-org-tools=4.2.1
+    mongodb-org=${MONGO_VERSION} \
+    mongodb-org-server=${MONGO_VERSION} \
+    mongodb-org-shell=${MONGO_VERSION} \
+    mongodb-org-mongos=${MONGO_VERSION} \
+    mongodb-org-tools=${MONGO_VERSION}
+
+#Make data directory for mongod
+RUN mkdir /data && mkdir /data/db
+RUN chmod 777 -R /data 
 
 #Add a standard user for later and open permissions to the needed directories
 RUN useradd -m -s /bin/bash $NORMAL_USER
@@ -102,3 +107,8 @@ RUN source $NVM_DIR/nvm.sh \
 #Install SDKMAN! aswell
 RUN curl -s "https://get.sdkman.io" | bash
 RUN source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk install $GRADLE_VERSION
+
+#Set entrypoint scripts
+ENTRYPOINT echo $USER_PASSWORD | sudo -S service ssh start \
+           echo $USER_PASSWORD | sudo -S mongod --config /etc/mongod.conf & \
+           mongo-express

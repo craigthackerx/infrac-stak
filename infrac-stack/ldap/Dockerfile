@@ -1,66 +1,59 @@
-#Use Ubuntu or u dum dum
-FROM ubuntu:latest
+# Use osixia/light-baseimage
+# sources: https://github.com/osixia/docker-light-baseimage
+FROM osixia/light-baseimage:release-1.2.0-dev
 
-#Set Enviroment Variables for personal preference below
+ARG LDAP_OPENLDAP_GID
+ARG LDAP_OPENLDAP_UID
 
-#Set timezone
-ENV TIME_ZONE=Europe/London
+ARG PQCHECKER_VERSION=2.0.0
+ARG PQCHECKER_MD5=c005ce596e97d13e39485e711dcbc7e1
 
-#Set System Locale 
-ENV LOCALE_CODE en_GB.UTF-8
+# Add openldap user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
+# If explicit uid or gid is given, use it.
+RUN if [ -z "${LDAP_OPENLDAP_GID}" ]; then groupadd -r openldap; else groupadd -r -g ${LDAP_OPENLDAP_GID} openldap; fi \
+    && if [ -z "${LDAP_OPENLDAP_UID}" ]; then useradd -r -g openldap openldap; else useradd -r -g openldap -u ${LDAP_OPENLDAP_UID} openldap; fi
 
-#Set user for personal preference and password. These are used later on.
-ENV NORMAL_USER cthacker
-ENV USER_PASSWORD Sp00kyP4SS!
+# Add buster-backports in preparation for downloading newer openldap components, especially sladp
+RUN echo "deb http://ftp.debian.org/debian buster-backports main" >> /etc/apt/sources.list
 
-#Set home enviroment
-ENV HOME /home/$NORMAL_USER
-
-#Set Node paths
-ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION 10.16.0
-ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
-ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
-
-#Set Gradle Version
-ENV GRADLE_VERSION gradle 4.8.1
-
-#Use bash from now on
-SHELL ["/bin/bash", "-c"]
-
-#Set the timezone
-RUN ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /etc/timezone
-
-#Install & update hings
-RUN apt-get update -y && apt-get -y install \ 
-    sudo \
-    bash \
-    nano \
-    openjdk-8-jdk \ 
+# Install OpenLDAP, ldap-utils and ssl-tools from the (backported) baseimage and clean apt-get files
+# sources: https://github.com/osixia/docker-light-baseimage/blob/stable/image/tool/add-service-available
+#          https://github.com/osixia/docker-light-baseimage/blob/stable/image/service-available/:ssl-tools/download.sh
+RUN echo "path-include /usr/share/doc/krb5*" >> /etc/dpkg/dpkg.cfg.d/docker && apt-get -y update \
+    && /container/tool/add-service-available :ssl-tools \
+    && LC_ALL=C DEBIAN_FRONTEND=noninteractive apt-get -t buster-backports install -y --no-install-recommends \
+    ca-certificates \
     curl \
-    software-properties-common \
-    python \
-    wget \
-    git \
-    locales \
-    ifupdown \
-    openssl \ 
-    openssh-server \ 
-    tmux \
-    unzip \
-    zip 
+    ldap-utils \
+    libsasl2-modules \
+    libsasl2-modules-db \
+    libsasl2-modules-gssapi-mit \
+    libsasl2-modules-ldap \
+    libsasl2-modules-otp \
+    libsasl2-modules-sql \
+    openssl \
+    slapd \
+    krb5-kdc-ldap \
+    && curl -o pqchecker.deb -SL http://www.meddeb.net/pub/pqchecker/deb/8/pqchecker_${PQCHECKER_VERSION}_amd64.deb \
+    && echo "${PQCHECKER_MD5} *pqchecker.deb" | md5sum -c - \
+    && dpkg -i pqchecker.deb \
+    && rm pqchecker.deb \
+    && apt-get remove -y --purge --auto-remove curl ca-certificates \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-#Add Locale
-RUN locale-gen $LOCALE_CODE
-RUN update-locale LANG=$LOCALE_CODE
+# Add service directory to /container/service
+ADD service /container/service
 
-#Fix Systemctl because you forgot how to use SystemV
-RUN wget https://raw.githubusercontent.com/gdraheim/docker-systemctl-replacement/master/files/docker/systemctl.py -O /usr/local/bin/systemctl
-RUN chmod a+x /usr/local/bin/systemctl
+# Use baseimage install-service script
+# https://github.com/osixia/docker-light-baseimage/blob/stable/image/tool/install-service
+RUN /container/tool/install-service
 
-#Add a standard user for later and open permissions to the needed directories
-RUN useradd -m -s /bin/bash $NORMAL_USER
-RUN usermod -aG sudo $NORMAL_USER
-RUN echo $NORMAL_USER:$USER_PASSWORD | chpasswd
-RUN chmod 777 -R /usr/local
-USER $NORMAL_USER
+# Add default env variables
+ADD environment /container/environment/99-default
+
+# Expose default ldap and ldaps ports
+EXPOSE 389 636
+
+# Put ldap config and database dir in a volume to persist data.
+# VOLUME /etc/ldap/slapd.d /var/lib/ldap
