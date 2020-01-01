@@ -11,7 +11,7 @@ services:
       ports:
         - "1000:80/tcp"
         - "1010:443/tcp"
-        - "1011:9090/tcp"
+        - "1020:9090/tcp"
     boards:
       build: ./boards
       image: "boards"
@@ -21,9 +21,9 @@ services:
       tty:  true
       privileged: false
       ports:
-        - "1020:80/tcp"
-        - "1021:8080/tcp"
-        - "1030:443/tcp"
+        - "1030:80/tcp"
+        - "1040:8080/tcp"
+        - "1050:443/tcp"
     ci:
       build: ./ci
       image: "ci"
@@ -34,8 +34,8 @@ services:
       environment:
        - ACCEPT_EULA=Y
       ports:
-        - "1040:8080/tcp"
-        - "1050:443/tcp"
+        - "1060:8080/tcp"
+        - "1070:443/tcp"
     dhcp:
       build: ./dhcp
       image: "dhcp"
@@ -46,8 +46,8 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "1060:67/udp"
-        - "1070:68/udp"
+        - "1080:67/udp"
+        - "1090:68/udp"
     dns:
       build: ./dns
       image: "dns"
@@ -58,10 +58,10 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "1080:53/tcp"
-        - "1090:56/tcp"
-        - "1100:8080/tcp"
-        - "1110:8443/tcp"
+        - "1100:53/tcp"
+        - "1110:56/tcp"
+        - "1120:8080/tcp"
+        - "1130:8443/tcp"
     git:
       build: ./git
       image: "git"
@@ -72,10 +72,10 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "1130:3306/tcp"
-        - "1140:22/tcp"
-        - "1150:80/tcp"
-        - "1160:443/tcp"
+        - "1140:3306/tcp"
+        - "1150:22/tcp"
+        - "1160:80/tcp"
+        - "1170:443/tcp"
     java-server:
       build: ./java-server
       image: "java-server"
@@ -86,8 +86,8 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "1170:8080/tcp"
-        - "1180:8443/tcp"
+        - "1180:8080/tcp"
+        - "1190:8443/tcp"
     ldap:
       build: ./ldap
       image: "ldap"
@@ -98,8 +98,8 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "1190:389/tcp"
-        - "1200:636/tcp"
+        - "1200:389/tcp"
+        - "1210:636/tcp"
     logging:
       build: ./logging
       image: "logging"
@@ -110,10 +110,10 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "1210:9000/tcp"
-        - "1220:443/tcp"
-        - "1230:27017/tcp"
-        - "1240:444/tcp"
+        - "1220:9000/tcp"
+        - "1230:443/tcp"
+        - "1240:27017/tcp"
+        - "1250:444/tcp"
     monitoring:
       build: ./monitoring
       image: "monitoring"
@@ -124,12 +124,12 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "1250:5666/udp"
-        - "1260:5666/tcp"
-        - "1270:12489/udp"
-        - "1280:12489/tcp"
-        - "1290:80/tcp"
-        - "1300:443/tcp"    
+        - "1260:5666/udp"
+        - "1270:5666/tcp"
+        - "1280:12489/udp"
+        - "1290:12489/tcp"
+        - "1300:80/tcp"
+        - "1310:443/tcp"    
     no-sql:
       build: ./no-sql
       image: "no-sql"
@@ -140,10 +140,10 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "1310:27017/tcp"
-        - "1320:80/tcp"
-        - "1321:8081/tcp"
-        - "1330:443/tcp"
+        - "1320:27017/tcp"
+        - "1330:80/tcp"
+        - "1340:8081/tcp"
+        - "1350:443/tcp"
     servicedesk:
       build: ./servicedesk
       image: "servicedesk"
@@ -154,9 +154,9 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "1340:80/tcp"
-        - "1350:443/tcp"
-        - "1360:3306/tcp"
+        - "1360:80/tcp"
+        - "1370:443/tcp"
+        - "1380:3306/tcp"
     sql:
       build: ./sql
       image: "sql"
@@ -167,8 +167,9 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "1370:3306/tcp"
-        - "1380:33060/tcp"
+        - "1390:80/tcp"
+        - "1400:3306/tcp"
+        - "1410:33060/tcp"
     web-server:
       build: ./web-server
       image: "web-server"
@@ -179,8 +180,8 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "1390:80/tcp"
-        - "1400:443/tcp"
+        - "1420:80/tcp"
+        - "1430:443/tcp"
     webmin:
       build: ./webmin
       image: "webmin"
@@ -191,9 +192,9 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "1410:80/tcp"
-        - "1420:139/tcp"
-        - "1430:443/tcp"
+        - "1440:80/tcp"
+        - "1450:139/tcp"
+        - "1460:443/tcp"
     wiki:
       build: ./wiki
       image: "wiki"
@@ -204,5 +205,5 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "1440:80/tcp"
-        - "1450:443/tcp"
+        - "1470:80/tcp"
+        - "1480:443/tcp"

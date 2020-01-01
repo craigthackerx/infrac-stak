@@ -21,6 +21,8 @@ ENV DATABASE_NAME exampledb
 ENV DATABASE_USER craig
 ENV DATABASE_PASSWORD Sp00kyP4SS!
 
+ENV PHPMYADMIN_VERSION 4.9.3
+
 EXPOSE 80 3306
 
 #Use bash from now on
@@ -61,10 +63,12 @@ RUN update-locale LANG=$LOCALE_CODE
 RUN wget https://raw.githubusercontent.com/gdraheim/docker-systemctl-replacement/master/files/docker/systemctl.py -O /usr/local/bin/systemctl
 RUN chmod a+x /usr/local/bin/systemctl
 
-#Install php
+#Install phpmyadmin
 RUN export DEBIAN_FRONTEND=noninteractive \ 
         && apt-get install -y php-mbstring php-gettext \
         && apt install -y phpmyadmin
+ADD phpmyadmin/ /etc/phpmyadmin
+ADD phpmyadmin.conf /etc/apache2/conf-enabled/phpmyadmin.conf
 
 #Create Databases
 RUN service mysql start \ 
@@ -86,5 +90,6 @@ USER $NORMAL_USER
 
 #Set entrypoint scripts
 ENTRYPOINT echo $USER_PASSWORD | sudo -S service mysql start \
+        && echo $USER_PASSWORD | sudo -S service apache2 start \
         && echo $USER_PASSWORD | sudo -S service ssh start \
         && tail -f /dev/null 
