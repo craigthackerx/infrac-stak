@@ -23,9 +23,9 @@ The modules planned are as follows with inital technolgies used:
 - Logging ~ GrayLog
 - Monitoring ~ Nagios Core
 - NoSQL Database ~ MongoDB & MongoExpress
-- SQL Database ~ MariaDB
+- SQL Database ~ MariaDB & phpmyAdmin
 - Service Desk ~ oSTicket
-- Web Server ~ Apache HTTPD
+- Web Server ~ Apache HTTPD & ApacheGUI
 - Wiki-Style Documentation ~ Dokuwiki
 
 While these modules may change with time, in this iteration, this is the technlogies which are being explored.

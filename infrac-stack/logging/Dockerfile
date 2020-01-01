@@ -90,7 +90,7 @@ USER $NORMAL_USER
 
 #Set entrypoint scripts
 ENTRYPOINT echo $USER_PASSWORD | sudo -S service ssh start \
-        && echo 'export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"' \
+        && export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"\
         && echo $USER_PASSWORD | sudo -S service elasticsearch start \
         && echo $USER_PASSWORD | sudo -S service graylog-server start \
         && echo $USER_PASSWORD | sudo -S mongod --config /etc/mongod.conf \

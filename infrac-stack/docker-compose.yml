@@ -181,6 +181,7 @@ services:
         - ACCEPT_EULA=Y
       ports:
         - "1420:80/tcp"
+        - "1421:9999/tcp"
         - "1430:443/tcp"
     webmin:
       build: ./webmin
