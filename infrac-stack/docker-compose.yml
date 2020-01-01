@@ -109,7 +109,7 @@ services:
       environment:
         - ACCEPT_EULA=Y
       ports:
-        - "1210:80/tcp"
+        - "1210:9000/tcp"
         - "1220:443/tcp"
         - "1230:27017/tcp"
         - "1240:444/tcp"
