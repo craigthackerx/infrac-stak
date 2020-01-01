@@ -22,6 +22,7 @@ services:
       privileged: false
       ports:
         - "1020:80/tcp"
+        - "1021:8080/tcp"
         - "1030:443/tcp"
     ci:
       build: ./ci

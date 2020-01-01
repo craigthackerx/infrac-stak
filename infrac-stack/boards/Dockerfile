@@ -87,7 +87,7 @@ ADD config.php /var/www/html/kanboard/
 RUN chown -R www-data:www-data /var/www/html/kanboard
 ADD kanboard.conf /etc/nginx/conf.d/
 RUN service nginx start && nginx -t
-EXPOSE 80/tcp
+EXPOSE 8080/tcp
 
 #Add a standard user for later and open permissions to the needed directories
 RUN useradd -m -s /bin/bash $NORMAL_USER
