@@ -141,6 +141,7 @@ services:
       ports:
         - "1310:27017/tcp"
         - "1320:80/tcp"
+        - "1321:8081/tcp"
         - "1330:443/tcp"
     servicedesk:
       build: ./servicedesk

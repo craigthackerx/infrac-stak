@@ -79,6 +79,10 @@ RUN apt-get update && apt-get install -y \
     mongodb-org-mongos=${MONGO_VERSION} \
     mongodb-org-tools=${MONGO_VERSION}
 
+#Make data directory for mongod
+RUN mkdir /data && mkdir /data/db
+RUN chmod 777 -R /data 
+
 #Add a standard user for later and open permissions to the needed directories
 RUN useradd -m -s /bin/bash $NORMAL_USER
 RUN usermod -aG sudo $NORMAL_USER
@@ -106,5 +110,5 @@ RUN source "$HOME/.sdkman/bin/sdkman-init.sh" && sdk install $GRADLE_VERSION
 
 #Set entrypoint scripts
 ENTRYPOINT echo $USER_PASSWORD | sudo -S service ssh start \
-           echo $USER_PASSWORD | sudo -S mongod --config /etc/mongod.conf \
-        && tail -f /dev/null 
+           echo $USER_PASSWORD | sudo -S mongod --config /etc/mongod.conf & \
+           mongo-express
