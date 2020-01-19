@@ -1,5 +1,5 @@
 #Use Ubuntu or u dum dum
-FROM ubuntu:latest
+FROM craigtho/ubuntu:latest
 
 #Set Enviroment Variables for personal preference below
 
@@ -21,7 +21,7 @@ ENV DATABASE_NAME osticket
 ENV DATABASE_USER osticketuser
 ENV DATABASE_PASSWORD Sp00kyP4SS!
 
-EXPOSE 80 443 3306
+EXPOSE 80 443 3306 25 389
 
 #Use bash from now on
 SHELL ["/bin/bash", "-c"]
